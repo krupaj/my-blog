@@ -1,0 +1,42 @@
+{* Main front page *}
+
+{block content}
+<div class="row">
+	<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+		<div  n:snippet="posts" data-ajax-append="true">
+			{foreach $news as $new}
+			<div class="post-preview">
+				<a n:href="post id=>$new->getWebId()">
+					<h2 class="post-title">
+						{$new->getTitle()}
+					</h2>
+					<h3 class="post-subtitle">
+						{$new->getDescription()}
+					</h3>
+				</a>
+				<p class="post-meta">Zveřejněno <abbr title="{$new->getPublishDate()|date:'%d.%m.%Y'}">{$new->getPublishDate()|ago}</abbr>
+				v rubrice <a n:href="section id=>$new->getSection()->getWebalizeTitle()">{$new->getSection()->getTitle()}</a>
+				</p>
+			</div>
+			{sep} <hr> {/sep}
+			{/foreach}
+		</div>
+		<div n:snippet="pagin">
+			<hr>
+			<!-- Pager -->
+			<ul class="pager" n:if="!$paginator->last">
+				<li class="next">
+					<a n:href="setPage! page=>$paginator->page+1" class="ajax">Další příspěvky &rarr;</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+{/block}
+
+{block scripts}
+{include parent}
+{/block}
+
+
+

@@ -1,0 +1,45 @@
+#
+# WARNING: it is CRITICAL that this file & directory are NOT accessible directly via a web browser!
+# https://nette.org/security-warning
+#
+extensions:
+	console: Kdyby\Console\DI\ConsoleExtension
+	events: Kdyby\Events\DI\EventsExtension
+	annotations: Kdyby\Annotations\DI\AnnotationsExtension
+	doctrine: Kdyby\Doctrine\DI\OrmExtension
+
+parameters:
+	blogSettings:
+		webSiteName: my-story.cz
+		webSiteUrl: http://my-story.cz
+		webSiteEmail: krupnik@my-story.cz
+
+php:
+	date.timezone: Europe/Prague
+
+
+application:
+	errorPresenter: Error
+	mapping:
+		*: App\*Module\Presenters\*Presenter
+
+
+session:
+	expiration: 14 days
+
+
+services:
+	# Blog settings
+	- App\BlogSettings(%blogSettings%)
+	# Texy
+	- Texy\Texy
+	# Authenticator
+	- App\Model\Authenticator
+	# Repository services
+	- App\Model\Repository\UserRepository
+	- App\Model\Repository\ArticleRepository
+	- App\Model\Repository\SectionRepository
+	# Forms
+	- App\Forms\SignFormFactory
+	- App\Forms\ArticleFormFactory
+	router: App\RouterFactory::createRouter

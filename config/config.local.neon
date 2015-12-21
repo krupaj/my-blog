@@ -1,0 +1,16 @@
+doctrine:
+	user: blogUser
+	password: myBlogUser
+	dbname: postgres
+	driver: pdo_pgsql
+	metadata:
+		App: %appDir%
+parameters:
+
+
+database:
+	dsn: 'pgsql:host=127.0.0.1;dbname=postgres'
+	user: blogUser
+	password: myBlogUser
+	options:
+		lazy: yes
