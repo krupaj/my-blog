@@ -87,6 +87,12 @@ class Article {
 	 * @var ArrayCollection Tag[]
 	 */
 	private $tags;
+	
+	/**
+	 * @ORM\OneToMany(targetEntity="\App\Model\Entities\Comment")
+	 * @var ArrayCollection Comment[]
+	 */
+	private $comments;
 
 
 	/**
@@ -97,6 +103,7 @@ class Article {
 	 */
 	public function __construct($title, $description, $content, $publishDate, $published = FALSE) {
 		$this->tags = new ArrayCollection();
+		$this->comments = new ArrayCollection();
 		$this->description = $description;
 		$this->setTitle($title);
 		$this->content = $content;
@@ -130,7 +137,6 @@ class Article {
 		}
 		return [$myId, $myWebTitle];
 	}
-
 
 	/**
 	 * @param string $title
@@ -255,6 +261,38 @@ class Article {
 	 */
 	public function setSection($sectionid = NULL) {
 		$this->section = $sectionid;
+	}
+	
+	/**
+	 * Vraci vsechny komentare clanku
+	 * @return ArrayCollection Comment[]
+	 */
+	public function getComments() {
+		return $this->comments;
+	}
+	
+	/**
+	 * Pridava komentar ke clanku
+	 * @param Comment $comment
+	 * @return \App\Model\Entities\Article 
+	 */
+	public function addComment(Comment $comment) {
+		if (!$this->comments->contains($comment)) {
+			$this->comments->add($comment);
+		}
+		return $this;
+	}
+	
+	/**
+	 * Odstranuje komentar clanku
+	 * @param Comment $comment
+	 * @return \App\Model\Entities\Article 
+	 */
+	public function removeComment(Comment $comment) {
+		if ($this->comments->contains($comment)) {
+			$this->comments->removeElement($comment);
+		}
+		return $this;
 	}
 	
 	

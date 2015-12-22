@@ -42,4 +42,9 @@ services:
 	# Forms
 	- App\Forms\SignFormFactory
 	- App\Forms\ArticleFormFactory
+	-
+		implement: App\Controls\CommentsFactory
+		class: App\Controls\Comments
+		arguments: [%article%]
+		parameters: [article]
 	router: App\RouterFactory::createRouter
