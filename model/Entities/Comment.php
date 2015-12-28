@@ -27,6 +27,13 @@ class Comment {
 	 * @var int 
 	 */
 	protected $id;
+	
+	/**
+	 * @ORM\ManyToOne(targetEntity="Article")
+	 * @ORM\JoinColumn(name="article_id", referencedColumnName="article_id")
+	 * @var Article
+	 */
+	private $article;
 
 	/**
 	 * @ORM\Column(type="string", name="user_name", nullable=true)
@@ -61,7 +68,7 @@ class Comment {
 
     /**
      * @ORM\ManyToOne(targetEntity="Comment", inversedBy="replyComments")
-     * @JoinColumn(name="parent_comment_id", referencedColumnName="comment_article_id")
+     * @JoinColumn(name="parent_comment_article_id", referencedColumnName="comment_article_id")
      */
     protected $parentComment;
 
