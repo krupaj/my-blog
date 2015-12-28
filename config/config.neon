@@ -7,6 +7,7 @@ extensions:
 	events: Kdyby\Events\DI\EventsExtension
 	annotations: Kdyby\Annotations\DI\AnnotationsExtension
 	doctrine: Kdyby\Doctrine\DI\OrmExtension
+	translation: Kdyby\Translation\DI\TranslationExtension
 
 parameters:
 	blogSettings:
@@ -27,12 +28,24 @@ application:
 session:
 	expiration: 14 days
 
+latte:
+	macros:
+		- Nextras\Forms\Bridges\Latte\Macros\BS3InputMacros
+
+translation:
+	default: cs
+	fallback: [cs_CZ, cs]
 
 services:
+	# Texy
+	texyFilter: Texy\Texy
+	# latte filtry
+	nette.latteFactory:
+		setup:
+			- addFilter(ago, \NetteExtras\Helpers::timeAgoInWords)
+			- addFilter(texy, [@texyFilter, process])
 	# Blog settings
 	- App\BlogSettings(%blogSettings%)
-	# Texy
-	- Texy\Texy
 	# Authenticator
 	- App\Model\Authenticator
 	# Repository services

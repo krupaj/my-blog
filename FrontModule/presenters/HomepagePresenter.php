@@ -69,7 +69,7 @@ class HomepagePresenter extends BaseFrontPresenter {
 		list($parseId, $parseWebTitle) = Model\Entities\Article::parseWebId($id);
 		$this->article = $this->articleRepository->getById($parseId);
 		if (!is_object($this->article)) {
-			$this->flashMessage('Clanek nenalezen', 'danger');
+			$this->flashMessage($this->translator->translate('system.articleNF'), 'danger');
 			$this->redirect('default');
 		} else {
 			//inkrementovat citac pristupu
@@ -104,7 +104,7 @@ class HomepagePresenter extends BaseFrontPresenter {
 	public function actionSection($id) {
 		$this->section = $this->sectionRepository->findSectionByTitle($id);
 		if (!is_object($this->section)) {
-			$this->flashMessage('Rubrika nenalezena', 'danger');
+			$this->flashMessage($this->translator->translate('system.sectionNF'), 'danger');
 			$this->redirect('default');
 		}
 		//\Tracy\Debugger::log($this->section->getArticles(), 'response');

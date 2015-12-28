@@ -27,6 +27,7 @@ class Comments extends UI\Control {
 	 */
 	public function createComponentForm() {
 		$form = new Form;
+		$form->setRenderer(new \Nextras\Forms\Rendering\Bs3FormRenderer);
 		$form->addText('name', 'Jmeno:')
 			->setRequired('Please enter your name.');
 		$form->addTextArea('content', 'Komentar')

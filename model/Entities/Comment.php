@@ -29,7 +29,7 @@ class Comment {
 	protected $id;
 	
 	/**
-	 * @ORM\ManyToOne(targetEntity="Article")
+	 * @ORM\ManyToOne(targetEntity="App\Model\Entities\Article")
 	 * @ORM\JoinColumn(name="article_id", referencedColumnName="article_id")
 	 * @var Article
 	 */
@@ -37,14 +37,14 @@ class Comment {
 
 	/**
 	 * @ORM\Column(type="string", name="user_name", nullable=true)
-	 * @var string Nazev uzivatele, jenz komentar vytvoril a neni prihlaseny
+	 * @var string Nazev weboveho uzivatele, jenz komentar vytvoril
 	 */
 	protected $userName;
 	
 	/**
-	 * @ManyToOne(targetEntity="User")
-     * @JoinColumn(name="user_id", referencedColumnName="user_id")
-	 * @var User Uzivatel, jenz komentar vytvoril a je prihlaseny
+	 * @ORM\ManyToOne(targetEntity="App\Model\Entities\User")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
+	 * @var User Uzivatel systemu, jenz komentar vytvoril
 	 */
 	protected $user;
 
@@ -68,17 +68,20 @@ class Comment {
 
     /**
      * @ORM\ManyToOne(targetEntity="Comment", inversedBy="replyComments")
-     * @JoinColumn(name="parent_comment_article_id", referencedColumnName="comment_article_id")
+     * @ORM\JoinColumn(name="parent_comment_article_id", referencedColumnName="comment_article_id")
      */
     protected $parentComment;
 
 	/**
+	 * @param Article $article Odkaz na clanek
 	 * @param User $user Odkaz na prihlaseneho uzivatele
 	 * @param string $userName Jmeno neprihlaseneho uzivatele
 	 * @param string $content Obsah komentare
 	 * @param int $parent Nadrazeny prispevek, jedna se tudiz o odpoved na jiny komentar
 	 */
-	public function __construct($user, $userName, $content, $parent = NULL) {
+	public function __construct($article, $user, $userName, $content, $parent = NULL) {
+		$this->article = $article;
+		
 		if ($user !== NULL) {
 			$this->setUser($user);
 		}
@@ -127,8 +130,7 @@ class Comment {
 		if (!empty($this->userName)) {
 			return $this->userName;
 		} else {
-			//$this->getUse
-			//dodelat navrat Jmena dle uzivatele
+			return $this->user->getId();
 		}
 	}
 	
