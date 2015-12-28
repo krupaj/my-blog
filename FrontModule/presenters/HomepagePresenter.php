@@ -14,6 +14,8 @@ class HomepagePresenter extends BaseFrontPresenter {
 	public $sectionRepository;
 	/** @var \App\BlogSettings @inject */
 	public $blogSettings;
+	/** @var \App\Controls\CommentsFactory @inject */
+	public $commentsFactory;
 	/** @var \Kdyby\Doctrine\EntityManager @inject */
 	public $entityManager;
 	/** @var Model\Entities\Article */
@@ -60,7 +62,7 @@ class HomepagePresenter extends BaseFrontPresenter {
 	
 	/**
 	 * Detail clanku
-	 * @param article_id $id
+	 * @param string $id Identifikator clanku: article_id-webalize_title
 	 */
 	public function actionPost($id) {
 		
@@ -84,6 +86,14 @@ class HomepagePresenter extends BaseFrontPresenter {
 	
 	public function renderPost() {
 		$this->template->article = $this->article;
+	}
+	
+	/**
+	 * @return \App\Controls\Comments Vypis komentaru + form na pridani komentu
+	 */
+	public function createComponentComments() {
+		$component = $this->commentsFactory->create($this->article);
+		return $component;
 	}
 	
 	/********** action & render SECTION **********/
