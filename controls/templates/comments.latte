@@ -10,7 +10,21 @@
 <div class="col-sm-8">
 	<div class="panel post">
 		<div class="post-footer">
-			{control form}
+			{form form, class => ajax}
+				<div class="input-group"> 
+					<span class="input-group-addon">
+                        <a href="#"><i class="glyphicon glyphicon-user"></i></a>  
+                    </span>
+                   {input name}
+				   
+                </div>
+				<div class="input-group">
+					{input content}
+				</div>
+				<div class="input-group">
+					{input preview}
+				</div>
+			{/form}
 			<ul class="comments-list">
 				<li class="comment" n:foreach="$comments as $comment">
 					<div class="comment-body">
@@ -36,10 +50,23 @@
 		</div>
 	</div>
 </div>
+								
+<!-- Modal -->
+<div n:snippet='modal' class="modal fade" role="dialog">
+	<div class="modal-dialog" n:ifset='$modal'>
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{$modalTitle}</h4>
+			</div>
+			<div class="modal-body">
+				{$modalBody|noescape|texy}
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
 {/block}
-
-{block scripts}
-{/block}
-
-
-
