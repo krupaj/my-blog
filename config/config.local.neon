@@ -1,6 +1,6 @@
 doctrine:
 	user: blogUser
-	password: *****
+	password: myBlogUser
 	dbname: postgres
 	driver: pdo_pgsql
 	metadata:
@@ -11,6 +11,6 @@ parameters:
 database:
 	dsn: 'pgsql:host=127.0.0.1;dbname=postgres'
 	user: blogUser
-	password: *****
+	password: myBlogUser
 	options:
 		lazy: yes

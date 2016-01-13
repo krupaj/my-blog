@@ -27,16 +27,30 @@ class Comments extends UI\Control {
 	 */
 	public function createComponentForm() {
 		$form = new Form;
+		$form->setRenderer(new \Nextras\Forms\Rendering\Bs3FormRenderer);
 		$form->addText('name', 'Jmeno:')
 			->setRequired('Please enter your name.');
 		$form->addTextArea('content', 'Komentar')
 			->setRequired();
 
 		$form->addHidden('articleId', $this->article->getId());
-		$form->addSubmit('send', 'Save');
+		$form->addSubmit('preview', 'Preview');
 
-		$form->onSuccess[] = [$this, 'formSucceeded'];
+		$form->onSuccess[] = [$this, 'formPreview'];
 		return $form;
+	}
+	
+	/**
+	 * Nahled prispevku pro odeslani
+	 * @param Form $form
+	 * @param ArrayHash $values
+	 */
+	public function formPreview(Form $form, $values) {
+		
+		$this->template->modal = TRUE;
+		$this->template->modalTitle = 'Title';
+		$this->template->modalBody = $values->content;
+		$this->redrawControl('modal');
 	}
 
 	/**

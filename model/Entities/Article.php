@@ -65,7 +65,7 @@ class Article {
 	protected $counter;
 	
 	/**
-	 * @ORM\ManyToOne(targetEntity="\App\Model\Entities\Section", inversedBy="articles")
+	 * @ORM\ManyToOne(targetEntity="App\Model\Entities\Section", inversedBy="articles")
 	 * @ORM\JoinColumn(name="section_id", referencedColumnName="section_id")
 	 * @var Section 
 	 */
@@ -78,7 +78,7 @@ class Article {
 	protected $content;
 	
 	/**
-	 * @ORM\ManyToMany(targetEntity="\App\Model\Entities\Tag", inversedBy="articles", cascade={"persist"})
+	 * @ORM\ManyToMany(targetEntity="App\Model\Entities\Tag", inversedBy="articles", cascade={"persist"})
 	 * @ORM\JoinTable(
 	 *	name="article_tag",
 	 *	joinColumns={@ORM\JoinColumn(name="id", referencedColumnName="article_id", nullable=false)},
@@ -89,7 +89,7 @@ class Article {
 	private $tags;
 	
 	/**
-	 * @ORM\OneToMany(targetEntity="\App\Model\Entities\Comment")
+	 * @ORM\OneToMany(targetEntity="App\Model\Entities\Comment", mappedBy="article")
 	 * @var ArrayCollection Comment[]
 	 */
 	private $comments;
