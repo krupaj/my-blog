@@ -2,18 +2,16 @@
  * @param string   $basePath web base path
  * @param array    $flashes  flash messages
  *}
-
 <!DOCTYPE html>
 <html lang="cs">
 	<head>
 		<meta charset="utf-8">
-
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta name="description" content="blog">
+		<meta name="description" content="{_system.metaDescription}">
 		<meta name="author" content="Jiří Krupník">
 
-		<title>{ifset title}{include title|striptags} | {/ifset}My-blog</title>
+		<title>{ifset title}{include title|striptags|truncate:50} | {/ifset}{_system.webName}</title>
 
 		<!-- Bootstrap Core CSS -->
 		<link href="{$basePath}/css/bootstrap.min.css" rel="stylesheet">
@@ -49,7 +47,7 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Rubriky <span class="caret"></span></a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">{_system.section, 2} <span class="caret"></span></a>
 						<ul class="dropdown-menu" n:inner-foreach="$sections as $section">
 							<li><a n:href="Homepage:section id => $section->getWebalizeTitle()">{$section->getTitle()}</a></li>
 						</ul>
@@ -75,9 +73,9 @@
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                     <div class="site-heading">
-                        <h1 n:block="title">{$title}</h1>
+                        <h1 n:block="title">{ifset $title}{$title}{else}{_system.webName}{/ifset}</h1>
                         <hr class="small">
-                        <span class="subheading">{$description}</span>
+                        <span class="subheading">{ifset $description}{$description}{else}{_system.webDescription}{/ifset}</span>
                     </div>
                 </div>
             </div>
@@ -100,7 +98,7 @@
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                     <p class="copyright text-muted">
 						&copy; {$today|date:'%Y'} Jiří Krupník
-						| <a href='#'>Pravidla použití obsahu</a>
+						| <a href='#'>{_system.termsOfUse}</a>
 					</p>
                 </div>
             </div>

@@ -1,14 +1,12 @@
 <?php
-
 namespace App\AdminModule\Presenters;
 
-use Nette;
+use App\Presenters;
 
 /**
- * Base presenter for all application presenters.
+ * Base presenter pro modul Admin
  */
-abstract class BaseAdminPresenter extends Nette\Application\UI\Presenter
-{
+abstract class BaseAdminPresenter extends Presenters\BasePresenter {
 
 	public function beforeRender() {
 		if (!$this->getUser()->isLoggedIn() && $this->presenter->getName() != 'Sign') {

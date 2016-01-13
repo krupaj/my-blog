@@ -1,13 +1,11 @@
 <?php
-
 namespace App\AdminModule\Presenters;
 
-use Nette;
-use App\Model;
-use App\Forms\ArticleFormFactory;
+use App\Model,
+	App\Forms\ArticleFormFactory;
 
 
-class DashboardPresenter extends BaseAdminPresenter {
+final class DashboardPresenter extends BaseAdminPresenter {
 	/** @var ArticleFormFactory @inject */
 	public $articleForm;
 

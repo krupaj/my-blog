@@ -11,9 +11,9 @@ extensions:
 
 parameters:
 	blogSettings:
-		webSiteName: my-story.cz
-		webSiteUrl: http://my-story.cz
-		webSiteEmail: krupnik@my-story.cz
+		webSiteName: panopticon.cz
+		webSiteUrl: http://panopticon.cz
+		webSiteEmail: info@panopticon.cz
 
 php:
 	date.timezone: Europe/Prague

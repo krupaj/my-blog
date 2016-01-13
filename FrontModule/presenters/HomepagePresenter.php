@@ -1,12 +1,10 @@
 <?php
-
 namespace App\FrontModule\Presenters;
 
-use Nette;
 use App\Model;
 
 
-class HomepagePresenter extends BaseFrontPresenter {
+final class HomepagePresenter extends BaseFrontPresenter {
 	
 	/** @var Model\Repository\ArticleRepository @inject */
 	public $articleRepository;
@@ -28,8 +26,7 @@ class HomepagePresenter extends BaseFrontPresenter {
 
 	public function actionDefault() {
 		$this->template->bgImage = "home-bg.jpg";
-		$this->template->title = "Muj blog";
-		$this->template->description = "Muj pokus o blog v Nette";
+		//title a description se nastavuji defaultne z system.neon
 		$this->paginator = new \Nette\Utils\Paginator;
 		$this->paginator->setItemsPerPage(self::POST_PER_PAGE); // pocet polozek na strance
 		$this->paginator->setPage(1); // cislo aktualni stranky

@@ -14,8 +14,8 @@
 						{$new->getDescription()}
 					</h3>
 				</a>
-				<p class="post-meta">Zveřejněno <abbr title="{$new->getPublishDate()|date:'%d.%m.%Y'}">{$new->getPublishDate()|ago}</abbr>
-				v rubrice <a n:href="section id=>$new->getSection()->getWebalizeTitle()">{$new->getSection()->getTitle()}</a>
+				<p class="post-meta">{_system.published} <abbr title="{$new->getPublishDate()|date:'%d.%m.%Y'}">{$new->getPublishDate()|ago}</abbr>
+				{_system.inSection} <a n:href="section id=>$new->getSection()->getWebalizeTitle()">{$new->getSection()->getTitle()}</a>
 				</p>
 			</div>
 			{sep} <hr> {/sep}
@@ -26,7 +26,7 @@
 			<!-- Pager -->
 			<ul class="pager" n:if="!$paginator->last">
 				<li class="next">
-					<a n:href="setPage! page=>$paginator->page+1" class="ajax">Další příspěvky &rarr;</a>
+					<a n:href="setPage! page=>$paginator->page+1" class="ajax">{_system.nextPost} &rarr;</a>
 				</li>
 			</ul>
 		</div>

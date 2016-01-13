@@ -1,5 +1,4 @@
 <?php
-
 namespace App\AdminModule\Presenters;
 
 use Nette;
@@ -11,7 +10,7 @@ use App\Forms\ArticleFormFactory;
  * @author Jiri Krupnik <krupaj@seznam.cz>
  * @package \App\AdminModule\Presenters
  */
-class ArticlesPresenter extends BaseAdminPresenter {
+final class ArticlesPresenter extends BaseAdminPresenter {
 	/** @var ArticleFormFactory @inject */
 	public $articleForm;
 	/** @var \App\Model\Repository\ArticleRepository @inject */

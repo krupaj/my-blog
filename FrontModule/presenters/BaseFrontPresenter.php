@@ -1,20 +1,16 @@
 <?php
-
 namespace App\FrontModule\Presenters;
 
-use Nette;
+use App\Presenters;
 use App\Model;
 
 
 /**
- * Base presenter for all application presenters.
+ * Base presenter pro modul Front
  */
-abstract class BaseFrontPresenter extends Nette\Application\UI\Presenter {
+abstract class BaseFrontPresenter extends Presenters\BasePresenter {
 	const 
 		POST_PER_PAGE = 2;
-	
-	/** @var \Kdyby\Translation\Translator @inject */
-	public $translator;
 	
 	/** @var Model\Repository\SectionRepository @inject */
 	public $sectionRepository;
@@ -25,6 +21,4 @@ abstract class BaseFrontPresenter extends Nette\Application\UI\Presenter {
 		$this->template->sections = $this->sectionRepository->getAllSections();
 	}
 	
-	
-
 }

@@ -1,17 +1,19 @@
 <?php
-
 namespace App\AdminModule\Presenters;
 
 use Nette;
 use App\Forms\SignFormFactory;
 
 
-class SignPresenter extends \App\Presenters\BasePresenter {
-	/** @var SignFormFactory @inject */
-	public $factory;
+final class SignPresenter extends \App\Presenters\BasePresenter {
+	/** @var SignFormFactory */
+	protected $signFactory;
 
+	public function __construct(SignFormFactory $signFactory) {
+		$this->signFactory = $signFactory;
+	}
 	/**
-	 * Sign-in form factory.
+	 * Sign-in form factory na prihlaseni uzivatele.
 	 * @return Nette\Application\UI\Form
 	 */
 	protected function createComponentSignInForm() {
@@ -22,10 +24,12 @@ class SignPresenter extends \App\Presenters\BasePresenter {
 		return $form;
 	}
 
-
+	/**
+	 * Odhlaseni uzivatele
+	 */
 	public function actionOut() {
 		$this->getUser()->logout();
-		$this->flashMessage('You have been signed out.');
+		$this->flashMessage($this->translator->translate('system.logoutS'));
 		$this->redirect('in');
 	}
 
