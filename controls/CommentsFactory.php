@@ -1,19 +1,21 @@
 <?php
-
 namespace App\Controls;
 
-use Nette;
+use \App\Model\Entities\Article;
 use Nette\Application\UI;
 use Nette\Application\UI\Form;
 
 
 class Comments extends UI\Control {
-	/** @var \App\Model\Entities\Article */
+	/** @var Article */
 	private $article;
+	/** @var Nette\Http\SessionSection */
+	private $commentSession;
 
 
-	public function __construct($article) {
+	public function __construct(Article $article, Nette\Http\Session $session) {
 		$this->article = $article;
+		$this->commentSession = $session->getSection('comments');
 	}
 	
 	public function render() {
@@ -23,19 +25,20 @@ class Comments extends UI\Control {
 	}
 
 	/**
-	 * @return Form Pridavani noveho komentare
+	 * 1. Krok pri pridavani noveho komentare
+	 * @return Form Sepsani a nahled, ulozeni do session
 	 */
 	public function createComponentForm() {
 		$form = new Form;
 		$form->setRenderer(new \Nextras\Forms\Rendering\Bs3FormRenderer);
-		$form->addText('name', 'Jmeno:')
-			->setRequired('Please enter your name.');
-		$form->addTextArea('content', 'Komentar')
-			->setRequired();
+		$form->addText('name', 'system.commentName')
+			->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']));
+		$form->addTextArea('content', 'system.commentContent')
+			->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']));
 
 		$form->addHidden('articleId', $this->article->getId());
-		$form->addSubmit('preview', 'Preview');
-
+		$form->addSubmit('preview', 'system.commentPreview');
+		//prejit ke druhemu kroku, coz je ulozeni
 		$form->onSuccess[] = [$this, 'formPreview'];
 		return $form;
 	}
@@ -46,22 +49,41 @@ class Comments extends UI\Control {
 	 * @param ArrayHash $values
 	 */
 	public function formPreview(Form $form, $values) {
+		//ulozeni do session
+		$this->commentSession->content = (array) $values;
 		
 		$this->template->modal = TRUE;
-		$this->template->modalTitle = 'Title';
-		$this->template->modalBody = $values->content;
+		$this->template->modalContent = $values->content;
+		$this->template->modalTitle = $form->getTranslator()->translate('system.commentPreview');
 		$this->redrawControl('modal');
+	}
+	
+	/**
+	 * 2. Krok pri pradavani noveho komentare
+	 * @return Form Nahled pres texy a ulozeni
+	 */
+	public function createComponentComment() {
+		$form = new Form;
+		$form->setRenderer(new \Nextras\Forms\Rendering\Bs3FormRenderer);
+		//tlacitko na ulozeni komentar, values se nacitaji ze session
+		$form->addSubmit('send', 'system.save');
+		
+		//prejit ke druhemu kroku, coz je ulozeni
+		$form->onSuccess[] = [$this, 'formSucceeded'];
+		return $form;
 	}
 
 	/**
 	 * @param Form $form
-	 * @param ArrayHash $values
 	 * @return void Zpracovani formulare - pridani noveho komentare
 	 */
-	public function formSucceeded(Form $form, $values) {
-		//todo vytvorit novy prispevek
-		$this->article = $this->articleRepository->getById($values->articleId);
+	public function formSucceeded(Form $form) {
+		//nacteni a smazani session
+		$values = ArrayHash::from($this->commentSession->comments);
+		$this->commentSession->remove();
 		
+		//ulozit novy prispevek ke clanku
+		$this->article = $this->articleRepository->getById($values->articleId);
 		$newComment = new \App\Model\Entities\Comment(NULL, $values->name, $values->content);
 		$this->article->addComment($newComment);
 		
@@ -72,5 +94,5 @@ class Comments extends UI\Control {
 
 interface CommentsFactory {
 	/** @return \App\Controls\Comments */
-	public function create($article);
+	public function create($article, $session);
 }

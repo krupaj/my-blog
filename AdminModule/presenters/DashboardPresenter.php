@@ -1,8 +1,8 @@
 <?php
 namespace App\AdminModule\Presenters;
 
-use App\Model,
-	App\Forms\ArticleFormFactory;
+use App\Model;
+use App\Forms\ArticleFormFactory;
 
 
 final class DashboardPresenter extends BaseAdminPresenter {

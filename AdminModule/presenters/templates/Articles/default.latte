@@ -9,8 +9,9 @@
 				<tr>
 					<th>Datum</th>
 					<th>Název</th>
-					<th>Rubrika</th>
+					<th>{_system.section, 1}</th>
 					<th>Publikováno</th>
+					<th> </th>
 				</tr>
 			</thead>
 			<tbody>
@@ -40,13 +41,28 @@
 {include parent}
 <script>
 var link = {link processArticles!};		
+		//https://datatables.net/examples/ajax/null_data_source.html
 		
 $(document).ready(function() {
-    $('#articles').DataTable( {
+    $('#articles').DataTable({
         processing: true,
         serverSide: true,
-        ajax: link
-    } );
+        ajax: link,
+		columnDefs: [{
+			targets: -1,
+			data: null,
+			defaultContent: "<div class=\"btn-group\"> \
+						<button type=\"button\" class=\"btn btn-default dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\"> \
+						Nahled <span class=\"caret\"></span> \
+						</button> \
+						<ul class=\"dropdown-menu\"> \
+							<li><a href=\"#\">Editovat</a></li> \
+							<li role=\"separator\" class=\"divider\"></li> \
+							<li><a href=\"#\">Smazat</a></li> \
+						</ul> \
+					</div>"
+		}]
+    });
 });
 </script>
 {/block}

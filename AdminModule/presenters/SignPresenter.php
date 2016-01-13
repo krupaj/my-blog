@@ -18,6 +18,7 @@ final class SignPresenter extends \App\Presenters\BasePresenter {
 	 */
 	protected function createComponentSignInForm() {
 		$form = $this->factory->create();
+		$form->setTranslator($this->translator);
 		$form->onSuccess[] = function ($form) {
 			$form->getPresenter()->redirect('Dashboard:');
 		};

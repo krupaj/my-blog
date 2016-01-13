@@ -2,10 +2,11 @@
 
 namespace App\Model\Repository;
 
-use Nette,
-	Nette\Utils\DateTime,
-	Nette\Utils\Strings;
+use Nette;
+use Nette\Utils\DateTime;
+use Nette\Utils\Strings;
 use App\Model\Entities;
+use \Tracy\Debugger;
 
 /**
  * Articles management.
@@ -52,6 +53,22 @@ class ArticleRepository extends Nette\Object {
 	 */
 	public function getById($id) {
 		return $this->myArticleRepository->find($id);
+	}
+	
+	/**
+	 * Odstraneni konkretniho clanku
+	 * @param \App\Model\Entities\Article $article
+	 * @return boolean
+	 */
+	public function deleteArticle(Entities\Article $article) {
+		try {
+			$this->em->remove($article);
+			$result = $this->em->flush();
+		} catch (\Doctrine\ORM\ORMException $e) {
+			Debugger::log($e, Debugger::INFO);
+			$result = FALSE;
+		}
+		return $result;
 	}
 	
 	/**

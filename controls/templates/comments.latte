@@ -61,10 +61,13 @@
 				<h4 class="modal-title">{$modalTitle}</h4>
 			</div>
 			<div class="modal-body">
-				{$modalBody|noescape|texy}
+				{$modalContent|noescape|texy}
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				{form comment, class => ajax}
+					{input save}
+					<button type="button" class="btn btn-default" data-dismiss="modal">{_system.close}</button>
+				{/form}
 			</div>
 		</div>
 	</div>

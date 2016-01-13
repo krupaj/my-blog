@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Forms;
 
 use Nette;
@@ -7,41 +6,39 @@ use Nette\Application\UI\Form;
 use Nette\Security\User;
 
 
-class SignFormFactory extends Nette\Object
-{
+class SignFormFactory extends Nette\Object {
 	/** @var User */
 	private $user;
 
-
-	public function __construct(User $user)
-	{
+	public function __construct(User $user) {
 		$this->user = $user;
 	}
-
 
 	/**
 	 * @return Form
 	 */
-	public function create()
-	{
+	public function create() {
 		$form = new Form;
-		$form->addText('username', 'Username:')
-			->setRequired('Please enter your username.');
+		$form->addText('username', 'system.credentialsName')
+			->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']));
 
-		$form->addPassword('password', 'Password:')
-			->setRequired('Please enter your password.');
+		$form->addPassword('password', 'system.credentialsPassword')
+			->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']));
 
-		$form->addCheckbox('remember', 'Keep me signed in');
+		$form->addCheckbox('remember', 'system.keepCredentials');
 
-		$form->addSubmit('send', 'Sign in');
+		$form->addSubmit('send', 'system.signIn');
 
-		$form->onSuccess[] = array($this, 'formSucceeded');
+		$form->onSuccess[] = [$this, 'formSucceeded'];
 		return $form;
 	}
 
-
-	public function formSucceeded(Form $form, $values)
-	{
+	/**
+	 * Prihlaseni uzivatele
+	 * @param Form $form
+	 * @param ArrayHash $values
+	 */
+	public function formSucceeded(Form $form, $values) {
 		if ($values->remember) {
 			$this->user->setExpiration('14 days', FALSE);
 		} else {

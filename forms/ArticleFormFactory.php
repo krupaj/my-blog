@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Forms;
 
 use Nette;
@@ -23,30 +22,29 @@ class ArticleFormFactory extends Nette\Object {
 
 
 	/**
-	 * @return Form
+	 * @param \App\Model\Entities\Article|NULL $article Clanek k editaci
+	 * @return Form 
 	 */
-	public function create($id = NULL) {
+	public function create($article = NULL) {
 		$form = new Form;
-		$form->addText('title', 'Title:')
-			->setRequired('Please enter title.');
+		$form->addText('title', 'system.postName')
+			->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']));
 
-		$form->addText('description', 'Description:')
-			->setRequired('Please enter description.');
+		$form->addText('description', 'system.postDescription')
+			->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']));
 		
-		$form->addCheckbox('published', 'Published');
+		$form->addCheckbox('published', 'system.isPublished');
 		
 		//chybi publish_date
 
-		$form->addTextArea('content', 'Content:')
-				->setRequired('Please enter content');
+		$form->addTextArea('content', 'system.postContent')
+				->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']));
 
-		$form->addSubmit('send', 'Save');
+		$form->addSubmit('send', 'system.save');
 		
 		//id, vychozi hodnoty pri editaci
 		$form->addHidden('id');
-		if ($id !== NULL) {
-			/** @var \App\Model\Entities\Article */
-			$article = $this->repository->getById($id);
+		if ($article !== NULL) {
 			$defaults = $this->getDefaults($article);
 			$form->setDefaults($defaults);
 		}
@@ -61,22 +59,13 @@ class ArticleFormFactory extends Nette\Object {
 	 * @param Nette\Utils\ArrayHash $values
 	 */
 	public function formSucceeded(Form $form, $values) {
-		if (empty($values->id)) {
-			//novy clanek	
-			$result = $this->newArticle($values);
-			if ($result) {
-				$form->getPresenter()->flashMessage('Clanek byl uspesne pridan');
-			} else {
-				$form->getPresenter()->flashMessage('Clanek nebyl pridan');
-			}
+		//novy clanek nebo jeho editace
+		$result = empty($values->id) ? $this->newArticle($values) : $this->editArticle($values);
+		
+		if ($result) {
+			$form->getPresenter()->flashMessage($form->getTranslator()->translate('system.requestS'));
 		} else {
-			//editace clanku
-			$result = $this->editArticle($values);
-			if ($result) {
-				$form->getPresenter()->flashMessage('Zmeny ulozeny');
-			} else {
-				$form->getPresenter()->flashMessage('Zmeny nebyly ulozeny');
-			}
+			$form->getPresenter()->flashMessage($form->getTranslator()->translate('system.requestN'));
 		}
 		
 	}
@@ -117,6 +106,7 @@ class ArticleFormFactory extends Nette\Object {
 			// nastaveni atributu
 			$editArticle->setPublished($values->published);
 			$editArticle->setTitle($values->title);
+			$editArticle->setUpdateDate();
 			//ulozeni zmeny
 			$this->em->flush();
 		} catch (\Exception $e) {
@@ -132,9 +122,6 @@ class ArticleFormFactory extends Nette\Object {
 	 */
 	protected function getDefaults($article) {
 		$result = [];
-		if (!$article) {
-			return $result;
-		}
 		$result['id'] = $article->getId();
 		$result['title'] = $article->getTitle();
 		$result['description'] = $article->getDescription();

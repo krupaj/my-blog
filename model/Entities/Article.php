@@ -53,6 +53,12 @@ class Article {
 	protected $publishDate;
 	
 	/**
+	 * @ORM\Column(type="datetime", nullable=true, name="update_date")
+	 * @var DateTime|NULL Datum posledni aktualizace clanku 
+	 */
+	protected $updateDate;
+
+	/**
 	 * @ORM\Column(type="boolean", nullable=false, options={"default":FALSE})
 	 * @var boolean Je clanek uverejnen?
 	 */
@@ -145,7 +151,6 @@ class Article {
 	public function setTitle($title) {
 		$this->title = $title;
 		$this->webalizeTitle = Strings::webalize($title);
-		
 		return $this;
 	}
 	
@@ -188,6 +193,17 @@ class Article {
 	 */
 	public function getPublishDate() {
 		return $this->publishDate;
+	}
+	
+	public function getUpdateDate() {
+		return $this->updateDate();
+	}
+	
+	public function setUpdateDate($date = NULL) {
+		if ($date === NULL) {
+			$date = new DateTime();
+		}
+		$this->updateDate = $date;
 	}
 	
 	/**
@@ -243,10 +259,19 @@ class Article {
 	}
 	
 	/**
-	 * @return string Obsah clanku
+	 * @return string Obsah clanku ve formatu texy
 	 */
 	public function getContent() {
 		return $this->content;
+	}
+	
+	/**
+	 * @param string $content Obsah clanku, ve formatu texy
+	 */
+	public function setContent($content) {
+		if (!empty($content)) {
+			$this->content = $content;
+		}
 	}
 	
 	/**
