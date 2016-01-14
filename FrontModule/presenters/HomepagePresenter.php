@@ -121,7 +121,7 @@ final class HomepagePresenter extends BaseFrontPresenter {
 	
 	/********** action & render TERMS **********/
 	public function renderTerms() {
-		$this->template->bgImage = $this->article->getBgImage();
+		$this->template->bgImage = "home-bg.jpg";
 		$this->template->description = $this->translator->translate('system.termsHeading');
 	}
 	
