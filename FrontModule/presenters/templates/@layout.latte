@@ -72,10 +72,21 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                    <div class="site-heading">
+					{* uvodnik pro blog *}
+                    <div class="site-heading" n:if="!isset($article)">
                         <h1 n:block="title">{ifset $title}{$title}{else}{_system.webName}{/ifset}</h1>
                         <hr class="small">
                         <span class="subheading">{ifset $description}{$description}{else}{_system.webDescription}{/ifset}</span>
+                    </div>
+					{* uvodnik pro konkretni clanek na blogu *}
+					<div class="post-heading" n:if="isset($article)">
+                        <h1>{$article->getTitle()}</h1>
+                        <h2 class="subheading">{$article->getDescription(100)}</h2>
+                        <span class="meta">
+							{_system.published} <abbr title="{$article->getPublishDate()|date:'%d.%m.%Y, %H:%M'}">{$article->getPublishDate()|ago}</abbr>
+							{if $article->isUpdated()} (<abbr title="{$article->getUpdateDate()|date:'%d.%m.%Y, %H:%M'}">{_system.updateOn}</abbr>) {/if}
+							{_system.inSection} <a n:href="section id=>$article->getSection()->getWebalizeTitle()">{$article->getSection()->getTitle()}</a>
+						</span>
                     </div>
                 </div>
             </div>
@@ -98,7 +109,8 @@
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                     <p class="copyright text-muted">
 						&copy; {$today|date:'%Y'} Jiří Krupník
-						| <a href='#'>{_system.termsOfUse}</a>
+						| <a n:href='Homepage:terms'>{_system.termsOfUse} </a>
+						| {_system.licence} <a href="http://creativecommons.org/licenses/by/3.0/cz/" target="_blank">CC BY 3.0 CZ</a>
 					</p>
                 </div>
             </div>

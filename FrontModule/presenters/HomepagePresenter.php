@@ -69,19 +69,14 @@ final class HomepagePresenter extends BaseFrontPresenter {
 			$this->flashMessage($this->translator->translate('system.articleNF'), 'danger');
 			$this->redirect('default');
 		} else {
-			//inkrementovat citac pristupu
+			//inkrementovat citac pristupu a ulozeni zmeny
 			$this->article->setCounter();
-			//ulozeni zmeny
 			$this->entityManager->flush();
 		}
-			
-		$this->template->bgImage = "post-bg.jpg";
-		$this->template->title = $this->article->getTitle();
-		$this->template->description = $this->article->getDescription(100);
-		
 	}
 	
 	public function renderPost() {
+		$this->template->bgImage = $this->article->getBgImage();
 		$this->template->article = $this->article;
 	}
 	
@@ -122,6 +117,12 @@ final class HomepagePresenter extends BaseFrontPresenter {
 		$this->paginator->setItemCount($total);
 		$this->template->paginator = $this->paginator;
 		
+	}
+	
+	/********** action & render TERMS **********/
+	public function renderTerms() {
+		$this->template->bgImage = $this->article->getBgImage();
+		$this->template->description = $this->translator->translate('system.termsHeading');
 	}
 	
 	

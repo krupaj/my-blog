@@ -1,11 +1,10 @@
 <?php
-
 namespace App\Model\Entities;
 
 use Doctrine\ORM\Mapping AS ORM;
-use Nette\Utils\Strings,
-	Nette\Utils\DateTime,
-	Doctrine\Common\Collections\ArrayCollection;
+use Nette\Utils\Strings;
+use	Nette\Utils\DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Class Article
@@ -182,6 +181,14 @@ class Article {
 	}
 	
 	/**
+	 * @todo Neni v sloupec v db a ani polozky ve formech
+	 * @return string
+	 */
+	public function getBgImage() {
+		return 'post-bg.jpg';
+	}
+	
+	/**
 	 * @param DateTime $date Datum zverejneni clanku
 	 */
 	public function setPublishDate(DateTime $date) {
@@ -195,15 +202,29 @@ class Article {
 		return $this->publishDate;
 	}
 	
+	/**
+	 * @return DateTime|NULL Datum aktualizace clanku
+	 */
 	public function getUpdateDate() {
 		return $this->updateDate();
 	}
 	
+	/**
+	 * @param DateTime $date
+	 * @return void Nastavuje datum aktualizace
+	 */
 	public function setUpdateDate($date = NULL) {
 		if ($date === NULL) {
 			$date = new DateTime();
 		}
 		$this->updateDate = $date;
+	}
+	
+	/**
+	 * @return boolean Je clanek aktualizovany?
+	 */
+	public function isUpdated() {
+		return is_null($this->getUpdateDate());
 	}
 	
 	/**
