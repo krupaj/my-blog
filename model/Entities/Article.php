@@ -95,6 +95,7 @@ class Article {
 	
 	/**
 	 * @ORM\OneToMany(targetEntity="App\Model\Entities\Comment", mappedBy="article")
+	 * @ORM\OrderBy(("createDate" = "DESC"))
 	 * @var ArrayCollection Comment[]
 	 */
 	private $comments;
@@ -206,7 +207,7 @@ class Article {
 	 * @return DateTime|NULL Datum aktualizace clanku
 	 */
 	public function getUpdateDate() {
-		return $this->updateDate();
+		return $this->updateDate;
 	}
 	
 	/**
@@ -224,7 +225,7 @@ class Article {
 	 * @return boolean Je clanek aktualizovany?
 	 */
 	public function isUpdated() {
-		return is_null($this->getUpdateDate());
+		return !is_null($this->getUpdateDate());
 	}
 	
 	/**

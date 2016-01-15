@@ -58,6 +58,6 @@ services:
 	-
 		implement: App\Controls\CommentsFactory
 		class: App\Controls\Comments
-		arguments: [%article%]
-		parameters: [article]
+		arguments: [%article%, %session%, %translator%]
+		parameters: [article, session, translator]
 	router: App\RouterFactory::createRouter

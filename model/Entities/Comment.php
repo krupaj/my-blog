@@ -1,9 +1,8 @@
 <?php
-
 namespace App\Model\Entities;
 
 use Doctrine\ORM\Mapping AS ORM;
-use Nette\Utils\Strings;
+use Nette\Utils\DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 
 
@@ -29,7 +28,7 @@ class Comment {
 	protected $id;
 	
 	/**
-	 * @ORM\ManyToOne(targetEntity="App\Model\Entities\Article")
+	 * @ORM\ManyToOne(targetEntity="App\Model\Entities\Article", cascade={"persist"})
 	 * @ORM\JoinColumn(name="article_id", referencedColumnName="article_id")
 	 * @var Article
 	 */
@@ -56,7 +55,7 @@ class Comment {
 	
 	/**
 	 * @ORM\Column(type="datetime", nullable=false, name="create_date")
-	 * @var Nette\Utils\DateTime
+	 * @var DateTime
 	 */
 	protected $createDate;
 
@@ -91,7 +90,7 @@ class Comment {
 		
 		$this->content = $content;
 		$this->parentComment = $parent;
-		$this->createDate = new Nette\Utils\DateTime();
+		$this->createDate = new DateTime();
 		$this->replyComments = new ArrayCollection();
 	}
 	
@@ -117,7 +116,7 @@ class Comment {
 	}
 	
 	/**
-	 * @return Nette\Utils\DateTime Datum pridani prispevku
+	 * @return DateTime Datum pridani prispevku
 	 */
 	public function getCreateDate() {
 		return $this->createDate;
@@ -138,7 +137,7 @@ class Comment {
 	 * @return boolean Ma komentar nejake odpovedi?
 	 */
 	public function hasReplies() {
-		return $this->replyComments->isEmpty();
+		return !$this->replyComments->isEmpty();
 	}
 	
 	/**
@@ -146,6 +145,13 @@ class Comment {
 	 */
 	public function getReplies() {
 		return $this->replyComments;
+	}
+	
+	/**
+	 * @return boolean Je komentar odpovedi? Tzn. nema rodice?
+	 */
+	public function isReply() {
+		return !is_null($this->parentComment);
 	}
 	
 }

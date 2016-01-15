@@ -84,7 +84,7 @@ final class HomepagePresenter extends BaseFrontPresenter {
 	 * @return \App\Controls\Comments Vypis komentaru + form na pridani komentu
 	 */
 	public function createComponentComments() {
-		$component = $this->commentsFactory->create($this->article);
+		$component = $this->commentsFactory->create($this->article, $this->getSession(), $this->translator);
 		return $component;
 	}
 	

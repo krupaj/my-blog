@@ -7,47 +7,66 @@
 	<link href="{$basePath}/css/comments.css" rel="stylesheet">
 {/block}
 {block content}
-<div class="col-sm-8">
-	<div class="panel post">
-		<div class="post-footer">
+<div class="panel post">
+	<div class="post-footer">
+		<div class="row">
+			<div class="col-xs-6">
 			{form form, class => ajax}
-				<div class="input-group"> 
-					<span class="input-group-addon">
-                        <a href="#"><i class="glyphicon glyphicon-user"></i></a>  
-                    </span>
-                   {input name}
-				   
-                </div>
-				<div class="input-group">
+				<div class="form-group">
+					<div class="input-group"> 
+						<span class="input-group-addon">
+							<a href="#"><i class="glyphicon glyphicon-user"></i></a>  
+						</span>
+					   {input name}
+					</div>
+				</div>
+				<div class="form-group">
 					{input content}
 				</div>
-				<div class="input-group">
-					{input preview}
+				<div class="form-group">
+					<div class="input-group">
+						{input preview}
+					</div>
 				</div>
 			{/form}
-			<ul class="comments-list">
-				<li class="comment" n:foreach="$comments as $comment">
-					<div class="comment-body">
-						<div class="comment-heading">
-							<h4 class="user">{$comment->getAuthorName()}</h4>
-							<h5 class="time">{$comment->getCreateDate()|ago}</h5>
-						</div>
-						<p> {$comment->getContent()|noescape|texy} </p>
-					</div>
-					<ul class="comments-list" n:if="$comment->hasReplies()">
-						<li class="comment" n:foreach="$comment->getReplies() as $reply">
-							<div class="comment-body">
-								<div class="comment-heading">
-									<h4 class="user">{$reply->getAuthorName()}</h4>
-									<h5 class="time">{$reply->getCreateDate()|ago}</h5>
-								</div>
-								<p>{$reply->getContent()|noescape|texy}</p>
-							</div>
-						</li> 
-					</ul>
-				</li>
-			</ul>
+			</div>
+			<div class="col-xs-6">
+				<p class="texy-helper">
+					<pre>
+*kurzíva*
+**tučné**
+"odkaz":http://example.com
+
+/--php
+phpkod();
+\--
+					</pre>
+				</p>
+			</div>
 		</div>
+		<ul class="comments-list">
+			<li class="comment" n:foreach="$comments as $comment">
+				{continueIf $comment->isReply()}
+				<div class="comment-body">
+					<div class="comment-heading">
+						<h4 class="user"><i class="glyphicon glyphicon-user"></i> {$comment->getAuthorName()}</h4>
+						<h5 class="time">{$comment->getCreateDate()|ago}</h5>
+					</div>
+					{$comment->getContent()|noescape|texy}
+				</div>
+				<ul class="comments-list" n:if="$comment->hasReplies()">
+					<li class="comment" n:foreach="$comment->getReplies() as $reply">
+						<div class="comment-body">
+							<div class="comment-heading">
+								<h4 class="user"><i class="glyphicon glyphicon-user"></i> {$reply->getAuthorName()}</h4>
+								<h5 class="time">{$reply->getCreateDate()|ago}</h5>
+							</div>
+							{$reply->getContent()|noescape|texy}
+						</div>
+					</li> 
+				</ul>
+			</li>
+		</ul>
 	</div>
 </div>
 								

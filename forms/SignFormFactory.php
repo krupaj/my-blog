@@ -10,7 +10,7 @@ class SignFormFactory extends Nette\Object {
 	/** @var User */
 	private $user;
 
-	public function __construct(User $user) {
+	public function __construct( User $user) {
 		$this->user = $user;
 	}
 
@@ -19,6 +19,7 @@ class SignFormFactory extends Nette\Object {
 	 */
 	public function create() {
 		$form = new Form;
+		$form->setTranslator($this->translator);
 		$form->addText('username', 'system.credentialsName')
 			->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']));
 

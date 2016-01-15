@@ -17,8 +17,7 @@ final class SignPresenter extends \App\Presenters\BasePresenter {
 	 * @return Nette\Application\UI\Form
 	 */
 	protected function createComponentSignInForm() {
-		$form = $this->factory->create();
-		$form->setTranslator($this->translator);
+		$form = $this->signFactory->create();
 		$form->onSuccess[] = function ($form) {
 			$form->getPresenter()->redirect('Dashboard:');
 		};
