@@ -40,7 +40,8 @@ class ArticleFormFactory extends Nette\Object {
 		//chybi publish_date
 
 		$form->addTextArea('content', 'system.postContent')
-				->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']));
+				->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']))
+				->setAttribute('rows', 10);
 
 		$form->addSubmit('send', 'system.save');
 		

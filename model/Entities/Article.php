@@ -95,7 +95,7 @@ class Article {
 	
 	/**
 	 * @ORM\OneToMany(targetEntity="App\Model\Entities\Comment", mappedBy="article")
-	 * @ORM\OrderBy(("createDate" = "DESC"))
+	 * @ORM\OrderBy({"createDate" = "DESC"})
 	 * @var ArrayCollection Comment[]
 	 */
 	private $comments;

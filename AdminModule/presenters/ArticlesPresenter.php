@@ -55,8 +55,7 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 			$this->flashMessage($this->translator->translate('system.invalidId'));
 			return;
 		}
-		$result = true;
-				//$this->articleRepository->deleteArticle($this->myArticle);
+		$result = $this->articleRepository->deleteArticle($this->myArticle);
 		if ($result) {
 			$this->flashMessage($this->translator->translate('system.requestS'), self::MESSAGE_SUCCESS);
 		} else {
