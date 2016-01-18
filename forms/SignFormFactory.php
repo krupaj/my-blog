@@ -9,17 +9,22 @@ use Nette\Security\User;
 class SignFormFactory extends Nette\Object {
 	/** @var User */
 	private $user;
+	/** @var BaseFormFactory */
+	private $baseFormFactory;
 
-	public function __construct( User $user) {
+	/**
+	 * @todo Veci s translatorem
+	 */
+	public function __construct(User $user, \App\Forms\BaseFormFactory $baseFormFactory) {
 		$this->user = $user;
+		$this->baseFormFactory = $baseFormFactory;
 	}
 
 	/**
 	 * @return Form
 	 */
 	public function create() {
-		$form = new Form;
-		$form->setTranslator($this->translator);
+		$form = $this->baseFormFactory->create();
 		$form->addText('username', 'system.credentialsName')
 			->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']));
 

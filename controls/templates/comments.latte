@@ -11,7 +11,10 @@
 	<div class="post-footer">
 		<div class="row">
 			<div class="col-xs-6">
-			{form form, class => ajax}
+			{form form}
+				<ul class="bg-danger" n:if="$form->hasErrors()">
+					<li n:foreach="$form->errors as $error">{$error}</li>
+				</ul>
 				<div class="form-group">
 					<div class="input-group"> 
 						<span class="input-group-addon">

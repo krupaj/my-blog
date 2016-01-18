@@ -53,6 +53,7 @@ services:
 	- App\Model\Repository\ArticleRepository
 	- App\Model\Repository\SectionRepository
 	# Forms
+	- App\Forms\BaseFormFactory
 	- App\Forms\SignFormFactory
 	- App\Forms\ArticleFormFactory
 	-

@@ -7,17 +7,19 @@ use Nette\Application\UI\Form;
 class ArticleFormFactory extends Nette\Object {
 	/** @var \App\Model\Repository\ArticleRepository */
 	private $repository;
-
 	/** @var \Kdyby\Doctrine\EntityManager */
 	private $em;
+	/** @var BaseFormFactory */
+	private $baseFormFactory;
 
 	/**
 	 * @param \App\Model\Repository\ArticleRepository $repository
-	 * @param \Kdyby\Doctrine\EntityManager $em
+	 * @param BaseFormFactory $baseFormFactory Tovarna se zakladni formularem
 	 */
-	public function __construct(\App\Model\Repository\ArticleRepository $repository, \Kdyby\Doctrine\EntityManager $em) {
+	public function __construct(\App\Model\Repository\ArticleRepository $repository, \App\Forms\BaseFormFactory $baseFormFactory) {
 		$this->repository = $repository;
-		$this->em = $em;
+		$this->em = $repository->getEntityManager();
+		$this->baseFormFactory = $baseFormFactory;
 	}
 
 
@@ -26,7 +28,7 @@ class ArticleFormFactory extends Nette\Object {
 	 * @return Form 
 	 */
 	public function create($article = NULL) {
-		$form = new Form;
+		$form = $this->baseFormFactory->create();
 		$form->addText('title', 'system.postName')
 			->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']));
 
