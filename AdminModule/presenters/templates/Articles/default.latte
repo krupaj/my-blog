@@ -40,8 +40,8 @@
 {block scripts}
 {include parent}
 <script>
-var link = {link processArticles!};		
-		//https://datatables.net/examples/ajax/null_data_source.html
+var link = {link processArticles!};	
+//https://datatables.net/examples/ajax/null_data_source.html
 		
 $(document).ready(function() {
     $('#articles').DataTable({
@@ -50,19 +50,44 @@ $(document).ready(function() {
         ajax: link,
 		columnDefs: [{
 			targets: -1,
+			orderable: false,
 			data: null,
 			defaultContent: "<div class=\"btn-group\"> \
-						<button type=\"button\" class=\"btn btn-default dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\"> \
+						<button type=\"button\" class=\"btn btn-default dropdown-toggle data-opt-pre\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\"> \
 						Nahled <span class=\"caret\"></span> \
 						</button> \
 						<ul class=\"dropdown-menu\"> \
-							<li><a href=\"#\">Editovat</a></li> \
+							<li><a href=\"#\" class='data-opt-edit'>Editovat</a></li> \
 							<li role=\"separator\" class=\"divider\"></li> \
-							<li><a href=\"#\">Smazat</a></li> \
+							<li><a href=\"#\" class='data-opt-del'>Smazat</a></li> \
 						</ul> \
 					</div>"
 		}]
     });
+	
+	$('#articles tbody').on('click', '.data-opt-edit', function(){
+		//console.log($(this).parents('tr'));
+		var editLink = $(this).parents('tr').attr('data-editLink');
+		doRequest(editLink);
+	});
+	
+	$('#articles tbody').on('click', '.data-opt-del', function(){
+		var delLink = $(this).parents('tr').attr('data-deleteLink');
+		var result = confirm('Smazat?');
+		if (result) {
+			doRequest(delLink);
+		}
+		return;
+	});
+	
+	
 });
+
+function doRequest(link) {
+	$.nette.ajax({
+		type: "POST",
+		url: link
+	});
+}
 </script>
 {/block}

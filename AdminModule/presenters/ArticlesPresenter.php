@@ -18,7 +18,6 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 	protected $myArticle = NULL;
 
 	public function renderDefault() {
-		
 	}
 	
 	/**
@@ -56,7 +55,8 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 			$this->flashMessage($this->translator->translate('system.invalidId'));
 			return;
 		}
-		$result = $this->articleRepository->deleteArticle($this->myArticle);
+		$result = true;
+				//$this->articleRepository->deleteArticle($this->myArticle);
 		if ($result) {
 			$this->flashMessage($this->translator->translate('system.requestS'), self::MESSAGE_SUCCESS);
 		} else {
@@ -72,7 +72,7 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 		$form = $this->articleForm->create($this->myArticle);
 		$form->setTranslator($this->translator);
 		$form->onSuccess[] = function ($form) {
-			$form->getPresenter()->redirect('Dashboard:');
+			$form->getPresenter()->redirect('this');
 		};
 		return $form;
 	}
@@ -110,12 +110,18 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 	protected function parseArticles($articles) {
 		$result = [];
 		foreach ($articles as $article) {
+			$editLink = $this->link('editArticle!', ['articleId' => $article->getId()]);
+			$deleteLink = $this->link('deleteArticle!', ['articleId' => $article->getId()]);
 			$myArticle = [];
-			$myArticle[] = $article->getPublishDate();
+			$myArticle['DT_RowAttr'] = [
+				'data-editLink' => $editLink,
+				'data-deleteLink' => $deleteLink
+			];
+			$myArticle[] = $article->getPublishDate()->format('d. m. Y, H:i:s');
 			$myArticle[] = $article->getTitle();
 			$myArticle[] = $article->getSection()->getTitle();
 			$myArticle[] = $article->isPublished();
-			$myArticle[] = ''; //mozna bude potreba kvuli tlacitkum
+			$myArticle[] = ''; //potreba kvuli tlacitkum
 			$result[] = $myArticle;
 		}
 		return $result;
