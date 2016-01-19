@@ -86,8 +86,8 @@ class Article {
 	 * @ORM\ManyToMany(targetEntity="App\Model\Entities\Tag", inversedBy="articles", cascade={"persist"})
 	 * @ORM\JoinTable(
 	 *	name="article_tag",
-	 *	joinColumns={@ORM\JoinColumn(name="id", referencedColumnName="article_id", nullable=false)},
-	 *	inverseJoinColumns={@ORM\JoinColumn(name="id", referencedColumnName="tag_id", nullable=false)}
+	 *	joinColumns={@ORM\JoinColumn(name="article_id", referencedColumnName="article_id", nullable=false)},
+	 *	inverseJoinColumns={@ORM\JoinColumn(name="tag_id", referencedColumnName="tag_id", nullable=false)}
 	 * )
 	 * @var ArrayCollection Tag[]
 	 */

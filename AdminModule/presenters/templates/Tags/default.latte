@@ -1,0 +1,74 @@
+{* Manage tags admin page *}
+
+{block content}
+<div class="row">
+	<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+		<h2 n:block=title>{_system.tag, 2}</h2>
+		{*toolbar - tlacitka*}
+		<div class="btn-group pull-right" role="group">
+			<a n:href='newTag!' type="button" class="ajax btn btn-default">{_system.new}</a>
+		</div>
+		{*tabulka - DataTables*}
+		<table class="table" id="tags">
+			<thead>
+				<tr>
+					<th>Název</th>
+					{* <th>Clanky</th> *}
+					<th> </th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr n:foreach='$tags as $tag'>
+					<td>
+						{$tag->getTitle()}
+					</td>
+					<td>
+						<div class="btn-group pull-right"> 
+							<a n:href="editTag! tagId => $tag->getId()" type="button" class="ajax btn btn-default"> 
+								{_system.edit} 
+							</a> 
+							<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu">
+								<li><a n:href="deleteTag! tagId => $tag->getId()" class="ajax">{_system.delete}</a></li>
+							</ul>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+		{snippet formContainer}
+		<div n:ifset="$component">
+			<h2>{$title}</h2>
+				{control $component}
+		</div>
+	{/snippet}
+	</div>
+</div>
+{/block}
+
+{block head}
+<link href="{$basePath}/css/dataTables.bootstrap.min.css" rel="stylesheet">
+{/block}
+
+{block scripts}
+{include parent}
+<script>
+		
+$(document).ready(function() {
+    $('#tags').DataTable({
+		columnDefs: [{
+			targets: -1,
+			orderable: false
+		}]
+    });	
+});
+
+</script>
+{/block}

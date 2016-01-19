@@ -102,7 +102,7 @@ final class HomepagePresenter extends BaseFrontPresenter {
 		//\Tracy\Debugger::log($this->section->getArticles(), 'response');
 		$this->template->bgImage = "home-bg.jpg";
 		$this->template->title = $this->section->getTitle();
-		$this->template->description = "Rubrika | Muj blog";
+		$this->template->description = $this->section->getDescription(200);
 		//nastaveni strankovani
 		$this->paginator = new \Nette\Utils\Paginator;
 		$this->paginator->setItemsPerPage(self::POST_PER_PAGE);
@@ -123,6 +123,12 @@ final class HomepagePresenter extends BaseFrontPresenter {
 	public function renderTerms() {
 		$this->template->bgImage = "home-bg.jpg";
 		$this->template->description = $this->translator->translate('system.termsHeading');
+	}
+	
+	/********** action & render TERMS **********/
+	public function renderProject() {
+		$this->template->bgImage = "home-bg.jpg";
+		$this->template->description = NULL;
 	}
 	
 	

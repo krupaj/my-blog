@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Model\Entities;
 
 use Doctrine\ORM\Mapping AS ORM;
@@ -28,7 +27,6 @@ class Tag {
 	 */
 	protected $id;
 
-
 	/**
 	 * @ORM\Column(type="string", nullable=false, unique=true)
 	 * @var string Nazev tagu
@@ -47,7 +45,6 @@ class Tag {
 	 */
 	protected $articles;
 
-
 	/**
 	 * @param type $title
 	 */
@@ -58,6 +55,9 @@ class Tag {
 		$this->articles = new ArrayCollection();
 	}
 	
+	/**
+	 * @return int
+	 */
 	public function getId() {
 		return $this->id;
 	}
@@ -85,4 +85,3 @@ class Tag {
 	}
 	
 }
-

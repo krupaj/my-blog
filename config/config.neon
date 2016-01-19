@@ -52,11 +52,13 @@ services:
 	- App\Model\Repository\UserRepository
 	- App\Model\Repository\ArticleRepository
 	- App\Model\Repository\SectionRepository
+	- App\Model\Repository\TagRepository
 	# Forms
 	- App\Forms\BaseFormFactory
 	- App\Forms\SignFormFactory
 	- App\Forms\ArticleFormFactory
 	- App\Forms\SectionFormFactory
+	- App\Forms\TagFormFactory
 	-
 		implement: App\Controls\CommentsFactory
 		class: App\Controls\Comments

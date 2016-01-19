@@ -53,13 +53,7 @@
 						</ul>
                     </li>
                     <li>
-                        <a href="about.html">About</a>
-                    </li>
-                    <li>
-                        <a href="post.html">Sample Post</a>
-                    </li>
-                    <li>
-                        <a href="contact.html">Contact</a>
+                        <a n:href="Homepage:project">{_system.about}</a>
                     </li>
                 </ul>
             </div>
@@ -74,7 +68,13 @@
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 					{* uvodnik pro blog *}
                     <div class="site-heading" n:if="!isset($article)">
-                        <h1 n:block="title">{ifset $title}{$title}{else}{_system.webName}{/ifset}</h1>
+                        <h1 n:block="title">
+						{ifset $title}
+							{$title}
+						{else}
+							<span class="text-danger">Pan</span><span class="text-success">optic</span><span class="text-danger">oN</span>
+						{/ifset}
+						</h1>
                         <hr class="small">
                         <span class="subheading">{ifset $description}{$description}{else}{_system.webDescription}{/ifset}</span>
                     </div>

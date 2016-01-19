@@ -79,7 +79,7 @@ final class SectionsPresenter extends BaseAdminPresenter {
 	}
 	
 	/**
-	 * @return ArticleFormFactory New/edit clanku
+	 * @return SectionFormFactory New/edit clanku
 	 */
 	public function createComponentManageSection() {
 		$form = $this->sectionForm->create($this->mySection);
