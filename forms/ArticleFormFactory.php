@@ -2,7 +2,9 @@
 namespace App\Forms;
 
 use Nette;
+use Nette\Utils\DateTime;
 use Nette\Application\UI\Form;
+use \Kdyby\Translation\Phrase;
 
 class ArticleFormFactory extends Nette\Object {
 	/** @var \App\Model\Repository\ArticleRepository */
@@ -11,6 +13,8 @@ class ArticleFormFactory extends Nette\Object {
 	private $em;
 	/** @var BaseFormFactory */
 	private $baseFormFactory;
+	/** @var string Format (maska) datumu */
+	private static $dateMask = 'd. m. Y, H:i';
 
 	/**
 	 * @param \App\Model\Repository\ArticleRepository $repository
@@ -27,7 +31,7 @@ class ArticleFormFactory extends Nette\Object {
 	 * @param \App\Model\Entities\Article|NULL $article Clanek k editaci
 	 * @return Form 
 	 */
-	public function create($article = NULL) {
+	public function create($article = NULL, $sections = []) {
 		$form = $this->baseFormFactory->create();
 		$form->addText('title', 'system.postName')
 			->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']));
@@ -37,7 +41,16 @@ class ArticleFormFactory extends Nette\Object {
 		
 		$form->addCheckbox('published', 'system.isPublished');
 		
-		//chybi publish_date
+		//chybi publish_date - datum zverejneni
+		$today = new DateTime();
+		$form->addText('publishDate', 'system.published')
+				->setType('datetime-local')
+				->setDefaultValue($today->format('d. m. Y, H:i'));
+				//->setAttribute('placeholder', 'd. m. Y, H:i (den. měsíc. rok');
+		
+		$form->addSelect('section', new Phrase('system.section',1))
+				->setItems($sections)
+				->setPrompt('Zvolte sekci');
 
 		$form->addTextArea('content', 'system.postContent')
 				->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']))
@@ -51,9 +64,23 @@ class ArticleFormFactory extends Nette\Object {
 			$defaults = $this->getDefaults($article);
 			$form->setDefaults($defaults);
 		}
-
+		$form->onValidate[] = [$this, 'validateForm'];
 		$form->onSuccess[] = [$this, 'formSucceeded'];
 		return $form;
+	}
+	
+	/**
+	 * @todo
+	 * @param Form $form
+	 */
+	public function validateForm(Form $form) {
+		$values = $form->getValues();
+		$publishDate = DateTime::createFromFormat(self::$dateMask, $values->publishDate);
+		if (!$publishDate) {
+			//neni validni datum
+			$item = $form->getTranslator()->translate('system.published');
+			$form->addError($form->getTranslator()->translate('system.formFormat', ['item' => $item, 'format' => self::$dateMask]));
+		}
 	}
 	
 	/**
@@ -62,6 +89,12 @@ class ArticleFormFactory extends Nette\Object {
 	 * @param Nette\Utils\ArrayHash $values
 	 */
 	public function formSucceeded(Form $form, $values) {
+		if (empty($values->publishDate)) {
+			$date = new DateTime();
+		} else {
+			$date = DateTime::createFromFormat('d. m. Y, H:i', $values->publishDate);
+		}
+		$values->offsetSet('publishDate', $date);
 		//novy clanek nebo jeho editace
 		$result = empty($values->id) ? $this->newArticle($values) : $this->editArticle($values);
 		
@@ -79,8 +112,6 @@ class ArticleFormFactory extends Nette\Object {
 	 */
 	protected function newArticle($values) {
 		$result = TRUE;
-		$today = new Nette\Utils\DateTime();
-		$values->offsetSet('publishDate', $today);
 		try {
 			$newArticle = new \App\Model\Entities\Article($values->title, $values->description, $values->content, $values->publishDate, $values->published);
 			//pridani noveho clanku
@@ -101,7 +132,7 @@ class ArticleFormFactory extends Nette\Object {
 	protected function editArticle($values) {
 		$result = TRUE;
 		try {
-			/** @var \App\Model\Entities\Article */
+			/** @var \App\Model\Entities\Article $editArticle */
 			$editArticle = $this->repository->getById($values->id);
 			if (!$editArticle) {
 				return FALSE;
@@ -110,6 +141,7 @@ class ArticleFormFactory extends Nette\Object {
 			$editArticle->setPublished($values->published);
 			$editArticle->setTitle($values->title);
 			$editArticle->setUpdateDate();
+			$editArticle->setPublishDate($values->publishDate);
 			//ulozeni zmeny
 			$this->em->flush();
 		} catch (\Exception $e) {
@@ -129,7 +161,12 @@ class ArticleFormFactory extends Nette\Object {
 		$result['title'] = $article->getTitle();
 		$result['description'] = $article->getDescription();
 		$result['published'] = $article->isPublished();
+		$publishDate = $article->getPublishDate();
+		if ($publishDate) {
+			$result['publishDate'] = $publishDate->format('d. m. Y, H:i');
+		}
 		$result['content'] = $article->getContent();
+		$result['section'] = $article->getSection()->getId();
 		return $result;
 	}
 

@@ -38,7 +38,7 @@ final class SectionsPresenter extends BaseAdminPresenter {
 	 * Pozadavek pro pridani noveho clanku
 	 */
 	public function handleNewSection() {
-		$this->template->title = $this->translator->translate('system.newSection');
+		$this->template->title = $this->translator->translate('system.new');
 		$this->template->component = 'manageSection';
 		$this->redrawControl('formContainer');
 	}
@@ -54,7 +54,7 @@ final class SectionsPresenter extends BaseAdminPresenter {
 			return;
 		}
 		
-		$this->template->title = $this->translator->translate('system.editPost');
+		$this->template->title = $this->translator->translate('system.edit');
 		$this->template->component = 'manageSection';
 		$this->redrawControl('formContainer');
 	}

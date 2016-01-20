@@ -28,10 +28,10 @@ class SectionFormFactory extends Nette\Object {
 	 */
 	public function create($section = NULL) {
 		$form = $this->baseFormFactory->create();
-		$form->addText('title', 'system.postName')
+		$form->addText('title', 'system.title')
 			->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']));
 
-		$form->addTextArea('description', 'system.postDescription')
+		$form->addTextArea('description', 'system.description')
 			->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']))
 			->setAttribute('rows', 10);
 

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Model\Repository;
 
 use Nette;
@@ -13,7 +12,6 @@ use \Tracy\Debugger;
  * @package App\Model\Repository
  */
 class ArticleRepository extends Nette\Object {
-
 
 	/** @var \Kdyby\Doctrine\EntityManager */
 	private $em;

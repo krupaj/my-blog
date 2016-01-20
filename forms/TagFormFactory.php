@@ -28,7 +28,7 @@ class TagFormFactory extends Nette\Object {
 	 */
 	public function create($tag = NULL) {
 		$form = $this->baseFormFactory->create();
-		$form->addText('title', 'system.postName')
+		$form->addText('title', 'system.title')
 			->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']));
 
 		$form->addSubmit('send', 'system.save');

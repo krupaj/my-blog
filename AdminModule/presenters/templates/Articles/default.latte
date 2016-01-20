@@ -3,7 +3,7 @@
 {block content}
 <div class="row">
 	<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-		<h2>{_system.post, 2}</h2>
+		<h2 n:block=title>{_system.post, 2}</h2>
 		{*toolbar - tlacitka*}
 		<div class="btn-group pull-right" role="group">
 			<a n:href='newArticle!' type="button" class="ajax btn btn-default">{_system.new}</a>
@@ -13,7 +13,7 @@
 			<thead>
 				<tr>
 					<th>Datum</th>
-					<th>Název</th>
+					<th>{_system.title}</th>
 					<th>{_system.section, 1}</th>
 					<th>Publikováno</th>
 					<th> </th>
@@ -70,13 +70,14 @@ $(document).ready(function() {
 		}]
     });
 	
-	$('#articles tbody').on('click', '.data-opt-edit', function(){
-		//console.log($(this).parents('tr'));
+	$('#articles tbody').on('click', '.data-opt-edit', function(event){
+		event.preventDefault();
 		var editLink = $(this).parents('tr').attr('data-editLink');
 		doRequest(editLink);
 	});
 	
-	$('#articles tbody').on('click', '.data-opt-del', function(){
+	$('#articles tbody').on('click', '.data-opt-del', function(event){
+		event.preventDefault();
 		var delLink = $(this).parents('tr').attr('data-deleteLink');
 		var result = confirm('Smazat?');
 		if (result) {
@@ -84,8 +85,6 @@ $(document).ready(function() {
 		}
 		return;
 	});
-	
-	
 });
 
 function doRequest(link) {

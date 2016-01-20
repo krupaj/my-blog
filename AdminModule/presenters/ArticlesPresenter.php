@@ -14,8 +14,15 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 	public $articleForm;
 	/** @var \App\Model\Repository\ArticleRepository @inject */
 	public $articleRepository;
+	/** @var \App\Model\Repository\SectionRepository @inject */
+	public $sectionRepository;
 	/** @var Model\Entities\Article|NULL */
-	protected $myArticle = NULL;
+	private $myArticle = NULL;
+	
+	
+	public function __construct() {
+		
+	}
 
 	public function renderDefault() {
 	}
@@ -68,11 +75,21 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 	 * @return ArticleFormFactory New/edit clanku
 	 */
 	public function createComponentManageArticle() {
-		$form = $this->articleForm->create($this->myArticle);
+		$sections = $this->getSections();
+		$form = $this->articleForm->create($this->myArticle, $sections);
 		$form->setTranslator($this->translator);
+		
+		$form->onValidate[] = function ($form) {
+			if ($form->hasErrors()) {
+				$this->template->component = 'manageArticle';
+				$this->redrawControl('formContainer');
+			}
+		};
+		
 		$form->onSuccess[] = function ($form) {
 			$form->getPresenter()->redirect('this');
 		};
+		
 		return $form;
 	}
 	
@@ -122,6 +139,20 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 			$myArticle[] = $article->isPublished();
 			$myArticle[] = ''; //potreba kvuli tlacitkum
 			$result[] = $myArticle;
+		}
+		return $result;
+	}
+	
+	/**
+	 * Vraci dostupne sekce
+	 * @return array
+	 */
+	protected function getSections() {
+		$result = [];
+		$sections = $this->sectionRepository->getAllSections();
+		foreach ($sections as $section) {
+			/** @var $section Model\Entities\Section */
+			$result[$section->getId()] = $section->getTitle();
 		}
 		return $result;
 	}
