@@ -125,6 +125,10 @@ class Article {
 		return $this->id;
 	}
 	
+	/**
+	 * Identifikator pro web url ve tvaru: ID-WEBTITLE
+	 * @return string 
+	 */
 	public function getWebId() {
 		$myWebIdentifier = $this->getId() . '-' . $this->getWebalizeTitle(50);
 		return $myWebIdentifier;
@@ -342,6 +346,13 @@ class Article {
 		return $this;
 	}
 	
+	/**
+	 * @return boolean Ma clanek prirazene tagy?
+	 */
+	public function hasTags() {
+		return !$this->tags->isEmpty();
+	}
+	
 	
 	/**
 	 * @return ArrayCollection Tagy clanku
@@ -372,6 +383,27 @@ class Article {
 			$this->tags->removeElement($tag);
 		}	
 		return $this;
+	}
+	
+	/**
+	 * Nastavuje tagy
+	 * @param Tag[] $tags
+	 */
+	public function setTags($tags) {
+		foreach ($this->tags as $tag) {
+			$tagId = $tag->getId();
+			if (!isset($tags[$tagId])) {
+				//odstranit
+				$this->removeTag($tag);
+			} else {
+				//tag je jiz prirazen
+				unset($tags[$tagId]);
+			}
+		}
+		//pridat vsechny nove zbyvajici
+		foreach ($tags as $tag) {
+			$this->addTag($tag);	
+		}
 	}
 }
 

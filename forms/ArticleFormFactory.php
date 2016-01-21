@@ -31,7 +31,7 @@ class ArticleFormFactory extends Nette\Object {
 	 * @param \App\Model\Entities\Article|NULL $article Clanek k editaci
 	 * @return Form 
 	 */
-	public function create($article = NULL, $sections = []) {
+	public function create($article = NULL, $sections = [], $tags = []) {
 		$form = $this->baseFormFactory->create();
 		$form->addText('title', 'system.postName')
 			->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']));
@@ -51,6 +51,9 @@ class ArticleFormFactory extends Nette\Object {
 		$form->addSelect('section', new Phrase('system.section',1))
 				->setItems($sections)
 				->setPrompt('Zvolte sekci');
+		
+		$form->addMultiSelect('tags', new Phrase('system.tag',2) )
+				->setItems($tags);
 
 		$form->addTextArea('content', 'system.postContent')
 				->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']))
@@ -70,7 +73,7 @@ class ArticleFormFactory extends Nette\Object {
 	}
 	
 	/**
-	 * @todo
+	 * Validace formulare se clankem: datum zverejneni
 	 * @param Form $form
 	 */
 	public function validateForm(Form $form) {
@@ -89,6 +92,7 @@ class ArticleFormFactory extends Nette\Object {
 	 * @param Nette\Utils\ArrayHash $values
 	 */
 	public function formSucceeded(Form $form, $values) {
+		//nastaveni datumu zverejneni
 		if (empty($values->publishDate)) {
 			$date = new DateTime();
 		} else {
@@ -113,10 +117,13 @@ class ArticleFormFactory extends Nette\Object {
 	protected function newArticle($values) {
 		$result = TRUE;
 		try {
+			//pridani noveho clanku a ulozeni zmen
 			$newArticle = new \App\Model\Entities\Article($values->title, $values->description, $values->content, $values->publishDate, $values->published);
-			//pridani noveho clanku
+			foreach ($values->tags as $tagId) {
+				$tag = $this->em->getReference(\App\Model\Entities\Tag::class, $tagId);
+				$newArticle->addTag($tag);	
+			}
 			$this->em->persist($newArticle);
-			//ulozeni zmen
 			$this->em->flush();
 		} catch (\Exception $e) {
 			\Tracy\Debugger::log($e, \Tracy\Debugger::INFO);
@@ -142,6 +149,12 @@ class ArticleFormFactory extends Nette\Object {
 			$editArticle->setTitle($values->title);
 			$editArticle->setUpdateDate();
 			$editArticle->setPublishDate($values->publishDate);
+			$tags = [];
+			foreach ($values->tags as $tagId) {
+				$tag = $this->em->getReference(\App\Model\Entities\Tag::class, $tagId);
+				$tags[$tagId] = $tag;
+			}
+			$editArticle->setTags($tags);
 			//ulozeni zmeny
 			$this->em->flush();
 		} catch (\Exception $e) {
@@ -167,6 +180,9 @@ class ArticleFormFactory extends Nette\Object {
 		}
 		$result['content'] = $article->getContent();
 		$result['section'] = $article->getSection()->getId();
+		foreach ($article->getTags() as $tag) {
+			$result['tags'][] = $tag->getId();
+		}
 		return $result;
 	}
 

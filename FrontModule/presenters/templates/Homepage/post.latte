@@ -4,6 +4,13 @@
 	<div class="row">
 		<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 			{$article->getContent()|noescape|texy}
+			<div n:if="$article->hasTags()" class="bg-warning">
+				<i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;
+				{foreach $article->getTags() as $tag}
+					<a n:href="Homepage:tag id=>$tag->getWebId()">{$tag->getTitle()}</a>
+					{sep}, {/sep}
+				{/foreach}
+			</div>
 		</div>
 	</div>   
 </article>

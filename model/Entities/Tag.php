@@ -63,6 +63,15 @@ class Tag {
 	}
 	
 	/**
+	 * Identifikator pro web url ve tvaru: ID-WEBTITLE
+	 * @return string 
+	 */
+	public function getWebId() {
+		$myWebIdentifier = $this->getId() . '-' . $this->getWebalizeTitle();
+		return $myWebIdentifier;
+	}
+	
+	/**
 	 * @param string $title Nazev tagu
 	 */
 	public function setTitle($title) {

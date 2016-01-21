@@ -99,7 +99,6 @@ final class HomepagePresenter extends BaseFrontPresenter {
 			$this->flashMessage($this->translator->translate('system.sectionNF'), 'danger');
 			$this->redirect('default');
 		}
-		//\Tracy\Debugger::log($this->section->getArticles(), 'response');
 		$this->template->bgImage = "home-bg.jpg";
 		$this->template->title = $this->section->getTitle();
 		$this->template->description = $this->section->getDescription(200);
@@ -116,6 +115,16 @@ final class HomepagePresenter extends BaseFrontPresenter {
 		$this->template->news = $articles->slice($this->paginator->getOffset(), $this->paginator->getLength());
 		$this->paginator->setItemCount($total);
 		$this->template->paginator = $this->paginator;
+		
+	}
+	
+	/********** action & render TAG **********/
+	
+	public function actionTag($id=NULL) {
+		
+	}
+	
+	public function renderTag() {
 		
 	}
 	

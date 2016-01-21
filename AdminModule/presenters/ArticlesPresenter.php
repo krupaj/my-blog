@@ -16,6 +16,8 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 	public $articleRepository;
 	/** @var \App\Model\Repository\SectionRepository @inject */
 	public $sectionRepository;
+	/** @var \App\Model\Repository\TagRepository @inject */
+	public $tagRepository;
 	/** @var Model\Entities\Article|NULL */
 	private $myArticle = NULL;
 	
@@ -76,7 +78,8 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 	 */
 	public function createComponentManageArticle() {
 		$sections = $this->getSections();
-		$form = $this->articleForm->create($this->myArticle, $sections);
+		$tags = $this->getTags();
+		$form = $this->articleForm->create($this->myArticle, $sections, $tags);
 		$form->setTranslator($this->translator);
 		
 		$form->onValidate[] = function ($form) {
@@ -153,6 +156,20 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 		foreach ($sections as $section) {
 			/** @var $section Model\Entities\Section */
 			$result[$section->getId()] = $section->getTitle();
+		}
+		return $result;
+	}
+	
+	/**
+	 * Vraci dostupne tagy
+	 * @return array
+	 */
+	protected function getTags() {
+		$result = [];
+		$tags = $this->tagRepository->getAllTags();
+		foreach ($tags as $tag) {
+			/** @var $tag Model\Entities\Section */
+			$result[$tag->getId()] = $tag->getTitle();
 		}
 		return $result;
 	}
