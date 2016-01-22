@@ -1,0 +1,25 @@
+{* Tag review on front page *}
+{block content}
+<div class="row">
+	<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+		{foreach $tagGroups as $letter => $tags}
+		<div class="post-preview">
+			<h2 class="post-title"> {$letter} </h2>
+			<ul class='row'>
+				<li n:foreach="$tags as $tag" class='col-xs-4'> 
+					<a n:href="Homepage:tag id=>$tag->getWebId()">{$tag->getTitle()}</a> ({$tag->getCountArticles()})
+				</li>
+			</ul>
+		</div>
+		{sep} <hr> {/sep}
+		{/foreach}
+	</div>
+</div>
+{/block}
+
+{block scripts}
+{include parent}
+{/block}
+
+
+

@@ -10,7 +10,7 @@ use App\Model;
  */
 abstract class BaseFrontPresenter extends Presenters\BasePresenter {
 	const 
-		POST_PER_PAGE = 2;
+		POST_PER_PAGE = 5;
 	
 	/** @var Model\Repository\SectionRepository @inject */
 	public $sectionRepository;

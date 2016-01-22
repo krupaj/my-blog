@@ -30,11 +30,11 @@ class TagRepository extends Nette\Object {
     }
 	
 	/**
-	 * 
-	 * @return 
+	 * @return Entities\Tag[]
 	 */
 	public function getAllTags() {
-		$result = $this->repository->findAll();
+		//$result = $this->repository->findAll();
+		$result = $this->repository->findBy([], ['title' => 'ASC']);
 		return $result;
 	}
 	

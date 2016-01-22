@@ -71,6 +71,20 @@ class Tag {
 		return $myWebIdentifier;
 	}
 	
+	public static function parseWebId($webId) {
+		$myId = NULL;
+		$myWebTitle = NULL;
+		$splits = explode('-', $webId, 2);
+		
+		if (isset($splits[0])) {
+			$myId = $splits[0];
+		}
+		if (isset($splits[1])) {
+			$myWebTitle = $splits[1];
+		}
+		return [$myId, $myWebTitle];
+	}
+	
 	/**
 	 * @param string $title Nazev tagu
 	 */
@@ -87,10 +101,35 @@ class Tag {
 	}
 	
 	/**
+	 * Vraci pocatecni pismeno/znak nazvu tagu
+	 * @return string
+	 */
+	public function getFirstLetter() {
+		$smallTitle = Strings::upper($this->title);
+		return substr($smallTitle, 0,1);
+	}
+	
+	/**
 	 * @return string Nazev tagu vhodny pro url
 	 */
 	public function getWebalizeTitle() {
 		return $this->webalizeTitle;
+	}
+	
+	/**
+	 * Vraci otagovane clanky
+	 * @return Article[]
+	 */
+	public function getArticles() {
+		return $this->articles;
+	}
+	
+	/**
+	 * Vraci pocet otagovanych clanku
+	 * @return int
+	 */
+	public function getCountArticles() {
+		return $this->articles->count();
 	}
 	
 }

@@ -7,7 +7,7 @@
 			<div n:if="$article->hasTags()" class="bg-warning">
 				<i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;
 				{foreach $article->getTags() as $tag}
-					<a n:href="Homepage:tag id=>$tag->getWebId()">{$tag->getTitle()}</a>
+					<a n:href="Tag:default id => $tag->getWebId()">{$tag->getTitle()}</a>
 					{sep}, {/sep}
 				{/foreach}
 			</div>
