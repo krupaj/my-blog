@@ -15,15 +15,19 @@ class ArticleFormFactory extends Nette\Object {
 	private $baseFormFactory;
 	/** @var string Format (maska) datumu */
 	private static $dateMask = 'd. m. Y, H:i';
+	
+	private $imageWwwDir;
 
 	/**
+	 * @param string Diskova cesta k www adresari
 	 * @param \App\Model\Repository\ArticleRepository $repository
 	 * @param BaseFormFactory $baseFormFactory Tovarna se zakladni formularem
 	 */
-	public function __construct(\App\Model\Repository\ArticleRepository $repository, \App\Forms\BaseFormFactory $baseFormFactory) {
+	public function __construct($wwwDir, \App\Model\Repository\ArticleRepository $repository, \App\Forms\BaseFormFactory $baseFormFactory) {
 		$this->repository = $repository;
 		$this->em = $repository->getEntityManager();
 		$this->baseFormFactory = $baseFormFactory;
+		$this->imageWwwDir = $wwwDir . '/images/articles/';
 	}
 
 
@@ -54,7 +58,10 @@ class ArticleFormFactory extends Nette\Object {
 		
 		$form->addMultiSelect('tags', new Phrase('system.tag',2) )
 				->setItems($tags);
-
+	
+		$form->addUpload('image', 'system.postImage')
+				->addRule(Form::IMAGE, $form->getTranslator()->translate('system.formImage', ['label' => '%label']));
+		
 		$form->addTextArea('content', 'system.postContent')
 				->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']))
 				->setAttribute('rows', 10);
@@ -84,6 +91,11 @@ class ArticleFormFactory extends Nette\Object {
 			$item = $form->getTranslator()->translate('system.published');
 			$form->addError($form->getTranslator()->translate('system.formFormat', ['item' => $item, 'format' => self::$dateMask]));
 		}
+		$image = $values->image;
+		if (!empty($image) && (!$image->isOk() || !$image->isImage())) {
+			$item = $form->getTranslator()->translate('system.postImage');
+			$form->addError($form->getTranslator()->translate('system.formImage', ['item' => $item]));
+		}
 	}
 	
 	/**
@@ -103,9 +115,9 @@ class ArticleFormFactory extends Nette\Object {
 		$result = empty($values->id) ? $this->newArticle($values) : $this->editArticle($values);
 		
 		if ($result) {
-			$form->getPresenter()->flashMessage($form->getTranslator()->translate('system.requestS'));
+			$form->getPresenter()->flashMessage($form->getTranslator()->translate('system.requestS'), 'success');
 		} else {
-			$form->getPresenter()->flashMessage($form->getTranslator()->translate('system.requestN'));
+			$form->getPresenter()->flashMessage($form->getTranslator()->translate('system.requestN'), 'danger');
 		}
 		
 	}
@@ -122,6 +134,9 @@ class ArticleFormFactory extends Nette\Object {
 			foreach ($values->tags as $tagId) {
 				$tag = $this->em->getReference(\App\Model\Entities\Tag::class, $tagId);
 				$newArticle->addTag($tag);	
+			}
+			if (!empty($values->image)) {
+				$newArticle->setImage($values->image->toImage(), $this->imageWwwDir);
 			}
 			$this->em->persist($newArticle);
 			$this->em->flush();
@@ -155,6 +170,10 @@ class ArticleFormFactory extends Nette\Object {
 				$tags[$tagId] = $tag;
 			}
 			$editArticle->setTags($tags);
+			if (!empty($values->image)) {
+				$editArticle->setImage($values->image->toImage(), $this->imageWwwDir);
+			}
+			
 			//ulozeni zmeny
 			$this->em->flush();
 		} catch (\Exception $e) {

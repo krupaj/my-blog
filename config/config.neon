@@ -56,7 +56,7 @@ services:
 	# Forms
 	- App\Forms\BaseFormFactory
 	- App\Forms\SignFormFactory
-	- App\Forms\ArticleFormFactory
+	- App\Forms\ArticleFormFactory(%wwwDir%)
 	- App\Forms\SectionFormFactory
 	- App\Forms\TagFormFactory
 	-

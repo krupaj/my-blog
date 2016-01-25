@@ -55,6 +55,4 @@ final class TagPresenter extends BaseFrontPresenter {
 		return $this->tags;
 	}
 	
-	
-	
 }

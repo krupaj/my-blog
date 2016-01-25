@@ -26,7 +26,8 @@ class SignFormFactory extends Nette\Object {
 	public function create() {
 		$form = $this->baseFormFactory->create();
 		$form->addText('username', 'system.credentialsName')
-			->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']));
+			->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']))
+			->setAttribute('autofocus', 'autofocus');
 
 		$form->addPassword('password', 'system.credentialsPassword')
 			->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']));

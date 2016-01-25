@@ -76,7 +76,7 @@ final class HomepagePresenter extends BaseFrontPresenter {
 	}
 	
 	public function renderPost() {
-		$this->template->bgImage = $this->article->getBgImage();
+		$this->template->bgImage = $this->article->getImage();
 		$this->template->article = $this->article;
 	}
 	
