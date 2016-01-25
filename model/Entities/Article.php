@@ -192,32 +192,11 @@ class Article {
 	}
 	
 	/**
-	 * @param \Nette\Utils\Image|NULL $image
+	 * @param string|NULL $image
 	 * @return boolean Probehlo ulozeni obrazku vcetne nahledu v poradku
 	 */
-	public function setImage($image, $path) {
-		if (!is_null($this->image)) {
-			//odstranit puvodni obr vcetne nahledu
-			$oldImagePath = $path . $this->getImage();
-			if (file_exists($oldImagePath)) {
-				unlink($oldImagePath);
-			}
-			$oldImagePath = $path . $this->getImageThumbnail();
-			if (file_exists($oldImagePath)) {
-				unlink($oldImagePath);
-			}
-		}
-		//vytvorit nahled a ulozit novy obr
-		$imageName = $this->getId() . '_' . $this->getWebalizeTitle(20) . '.jpg';
-		$thumbnail = 'pre' . '_' . $imageName;
-		$resImg = $image->save($path . $imageName);
-		if (!$resImg) {
-			return FALSE;
-		}
-		$this->image = $imageName;
-		$resImg2 = $image->save($path . $thumbnail, 50);
-		
-		return ($resImg && $resImg2);
+	public function setImage($image = NULL) {
+		$this->image = $image;
 	}
 	
 	/**
@@ -226,6 +205,13 @@ class Article {
 	 */
 	public function getImage() {
 		return (is_null($this->image)) ? 'post-bg.jpg' : $this->image;
+	}
+	
+	/**
+	 * @return boolean Ma clanek prirazen obrazek?
+	 */
+	public function hasImage() {
+		return !is_null($this->image);
 	}
 	
 	/**

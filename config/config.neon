@@ -48,6 +48,8 @@ services:
 	- App\BlogSettings(%blogSettings%)
 	# Authenticator
 	- App\Model\Authenticator
+	# Storage
+	- App\Model\ArticleImageStorage(%wwwDir%)
 	# Repository services
 	- App\Model\Repository\UserRepository
 	- App\Model\Repository\ArticleRepository
@@ -56,7 +58,7 @@ services:
 	# Forms
 	- App\Forms\BaseFormFactory
 	- App\Forms\SignFormFactory
-	- App\Forms\ArticleFormFactory(%wwwDir%)
+	- App\Forms\ArticleFormFactory
 	- App\Forms\SectionFormFactory
 	- App\Forms\TagFormFactory
 	-

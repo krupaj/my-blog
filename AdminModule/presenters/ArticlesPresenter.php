@@ -18,6 +18,8 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 	public $sectionRepository;
 	/** @var \App\Model\Repository\TagRepository @inject */
 	public $tagRepository;
+	/** @var Model\ArticleImageStorage @inject */
+	public $imageStorage;
 	/** @var Model\Entities\Article|NULL */
 	private $myArticle = NULL;
 	
@@ -64,6 +66,7 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 			$this->flashMessage($this->translator->translate('system.invalidId'));
 			return;
 		}
+		$this->imageStorage->deleteArticleImage($this->myArticle);
 		$result = $this->articleRepository->deleteArticle($this->myArticle);
 		if ($result) {
 			$this->flashMessage($this->translator->translate('system.requestS'), self::MESSAGE_SUCCESS);

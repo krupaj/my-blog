@@ -15,19 +15,19 @@ class ArticleFormFactory extends Nette\Object {
 	private $baseFormFactory;
 	/** @var string Format (maska) datumu */
 	private static $dateMask = 'd. m. Y, H:i';
-	
-	private $imageWwwDir;
+	/** @var \App\Model\ArticleImageStorage */
+	private $imageStorage;
 
 	/**
 	 * @param string Diskova cesta k www adresari
 	 * @param \App\Model\Repository\ArticleRepository $repository
 	 * @param BaseFormFactory $baseFormFactory Tovarna se zakladni formularem
 	 */
-	public function __construct($wwwDir, \App\Model\Repository\ArticleRepository $repository, \App\Forms\BaseFormFactory $baseFormFactory) {
+	public function __construct(\App\Model\ArticleImageStorage $imageStorage, \App\Model\Repository\ArticleRepository $repository, \App\Forms\BaseFormFactory $baseFormFactory) {
 		$this->repository = $repository;
 		$this->em = $repository->getEntityManager();
 		$this->baseFormFactory = $baseFormFactory;
-		$this->imageWwwDir = $wwwDir . '/images/articles/';
+		$this->imageStorage = $imageStorage;
 	}
 
 
@@ -136,7 +136,7 @@ class ArticleFormFactory extends Nette\Object {
 				$newArticle->addTag($tag);	
 			}
 			if (!empty($values->image)) {
-				$newArticle->setImage($values->image->toImage(), $this->imageWwwDir);
+				$this->imageStorage->setArticleImage($newArticle, $values->image->toImage());
 			}
 			$this->em->persist($newArticle);
 			$this->em->flush();
@@ -171,9 +171,8 @@ class ArticleFormFactory extends Nette\Object {
 			}
 			$editArticle->setTags($tags);
 			if (!empty($values->image)) {
-				$editArticle->setImage($values->image->toImage(), $this->imageWwwDir);
+				$this->imageStorage->setArticleImage($editArticle, $values->image->toImage());
 			}
-			
 			//ulozeni zmeny
 			$this->em->flush();
 		} catch (\Exception $e) {
