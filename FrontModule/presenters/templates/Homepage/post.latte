@@ -1,27 +1,22 @@
 {* Konkretni clanku blogu *}
 {block content}
-<article>
-	<div class="row">
-		<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-			{$article->getContent()|noescape|texy}
-			<div n:if="$article->hasTags()" class="bg-warning">
-				<i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;
-				{foreach $article->getTags() as $tag}
+<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+	<article>
+		{$article->getContent()|noescape|texy}
+		<div n:if="$article->hasTags()" >
+			{foreach $article->getTags() as $tag}
+				<span class='label-default label tag-link'>
+					<i class="glyphicon glyphicon-tag"></i> 
 					<a n:href="Homepage:tag id => $tag->getWebId()">{$tag->getTitle()}</a>
-					{sep}, {/sep}
-				{/foreach}
-			</div>
+				</span>
+			{/foreach}
 		</div>
-	</div>   
-</article>
-{* Komentare k clanku + form na pridani noveho komentu *}
-<article>
-	<div class="row">
-		<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-			{control comments}
-		</div>
-	</div>   
-</article>
+	</article>
+	{* Komentare k clanku + form na pridani noveho komentu *}
+	<article>
+		{control comments}
+	</article>
+</div>
 {/block}
 
 {block scripts}
