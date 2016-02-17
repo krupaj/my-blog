@@ -16,6 +16,8 @@ final class HomepagePresenter extends BaseFrontPresenter {
 	public $blogSettings;
 	/** @var \App\Controls\CommentsFactory @inject */
 	public $commentsFactory;
+	/** @var \App\Controls\IPollFactory @inject */
+	public $pollFactory;
 	/** @var \Kdyby\Doctrine\EntityManager @inject */
 	public $entityManager;
 	/** @var Model\Entities\Article */
@@ -59,6 +61,7 @@ final class HomepagePresenter extends BaseFrontPresenter {
 	/********** action & render POST **********/
 	
 	/**
+	 * @todo Vylepsit to inkrementovani
 	 * Detail clanku
 	 * @param string $id Identifikator clanku: article_id-webalize_title
 	 */
@@ -66,18 +69,25 @@ final class HomepagePresenter extends BaseFrontPresenter {
 		list($parseId, $parseWebTitle) = Model\Entities\Article::parseWebId($id);
 		$this->article = $this->articleRepository->getById($parseId);
 		if (!is_object($this->article)) {
+			//nepodarilo se ziskat clanek
 			$this->flashMessage($this->translator->translate('system.articleNF'), self::MESSAGE_DANGER);
 			$this->redirect('default');
-		} else {
-			//inkrementovat citac pristupu a ulozeni zmeny
-			$this->article->setCounter();
-			$this->entityManager->flush();
+		} 
+		if (!$this->user->isLoggedIn() && !$this->article->isPublished()) {
+			//nezobrazovat nezverejnene clanky neprihlasenym uzivatelum
+			$this->flashMessage($this->translator->translate('system.requestNA'), self::MESSAGE_DANGER);
+			$this->redirect('default');
 		}
+		
+		//inkrementovat citac pristupu a ulozeni zmeny
+		$this->article->setCounter();
+		$this->entityManager->flush();
 	}
 	
 	public function renderPost() {
 		$this->template->bgImage = $this->article->getImage();
 		$this->template->article = $this->article;
+		$this->template->votes = $this->article->getVotes();
 	}
 	
 	/**
@@ -86,6 +96,14 @@ final class HomepagePresenter extends BaseFrontPresenter {
 	public function createComponentComments() {
 		$component = $this->commentsFactory->create($this->article, $this->getSession(), $this->translator);
 		return $component;
+	}
+	
+	public function createComponentVote() {
+		return new \Nette\Application\UI\Multiplier(function($voteId) {
+			$component = $this->pollFactory->create();
+			$component->setVote($voteId);
+			return $component;
+		});
 	}
 	
 	/********** action & render SECTION **********/

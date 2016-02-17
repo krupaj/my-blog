@@ -101,6 +101,16 @@ class Article {
 	private $comments;
 	
 	/**
+	 * @ORM\ManyToMany(targetEntity="App\Model\Entities\Vote", cascade={"persist"})
+	 * @ORM\JoinTable(name="article_vote",
+     *      joinColumns={@ORM\JoinColumn(name="article_id", referencedColumnName="article_id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="vote_id", referencedColumnName="vote_id")}
+     *      )
+	 * @var ArrayCollection Vote[]
+	 */
+	private $votes;
+	
+	/**
 	 * @ORM\Column(type="string", nullable=true)
 	 * @var string Nazev obrazku
 	 */
@@ -116,6 +126,7 @@ class Article {
 	public function __construct($title, $description, $content, $publishDate, $published = FALSE) {
 		$this->tags = new ArrayCollection();
 		$this->comments = new ArrayCollection();
+		$this->votes = new ArrayCollection();
 		$this->description = $description;
 		$this->setTitle($title);
 		$this->content = $content;
@@ -433,6 +444,17 @@ class Article {
 		foreach ($tags as $tag) {
 			$this->addTag($tag);	
 		}
+	}
+	
+	/**
+	 * Vraci ankety spojene se clankem
+	 * @return Vote[]
+	 */
+	public function getVotes() {
+		if ($this->votes === NULL) {
+			$this->votes = new ArrayCollection();
+		}
+		return $this->votes;
 	}
 }
 

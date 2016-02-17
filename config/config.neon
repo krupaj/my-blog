@@ -55,15 +55,20 @@ services:
 	- App\Model\Repository\ArticleRepository
 	- App\Model\Repository\SectionRepository
 	- App\Model\Repository\TagRepository
+	- App\Model\Repository\VoteRepository
 	# Forms
 	- App\Forms\BaseFormFactory
 	- App\Forms\SignFormFactory
 	- App\Forms\ArticleFormFactory
 	- App\Forms\SectionFormFactory
 	- App\Forms\TagFormFactory
+	- App\Forms\VoteFormFactory
 	-
 		implement: App\Controls\CommentsFactory
 		class: App\Controls\Comments
 		arguments: [%article%, %session%, %translator%]
 		parameters: [article, session, translator]
+	-
+		class: App\Controls\PollFactory(@App\Model\Repository\VoteRepository, @App\Forms\BaseFormFactory, @Nette\Http\Request)
+		implement: App\Controls\IPollFactory
 	router: App\RouterFactory::createRouter

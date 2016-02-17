@@ -100,10 +100,10 @@ class Section {
 	}
 	
 	/**
-	 * @param type $length
+	 * @param int|NULL $length
 	 * @return string
 	 */
-	public function getDescription($length=NULL) {
+	public function getDescription($length = NULL) {
 		if ($length !== NULL) {
 			return Strings::truncate($this->description, $length);
 		}

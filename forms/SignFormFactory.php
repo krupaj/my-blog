@@ -12,9 +12,6 @@ class SignFormFactory extends Nette\Object {
 	/** @var BaseFormFactory */
 	private $baseFormFactory;
 
-	/**
-	 * @todo Veci s translatorem
-	 */
 	public function __construct(User $user, \App\Forms\BaseFormFactory $baseFormFactory) {
 		$this->user = $user;
 		$this->baseFormFactory = $baseFormFactory;
@@ -55,7 +52,7 @@ class SignFormFactory extends Nette\Object {
 		try {
 			$this->user->login($values->username, $values->password);
 		} catch (Nette\Security\AuthenticationException $e) {
-			$form->addError($e->getMessage());
+			$form->addError($form->getTranslator()->translate('system.credentialsLogError'));
 		}
 	}
 

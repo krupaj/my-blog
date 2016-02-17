@@ -3,6 +3,7 @@ namespace App\AdminModule\Presenters;
 
 use App\Model;
 use App\Forms\ArticleFormFactory;
+use App\Forms\VoteFormFactory;
 
 /**
  * Sprava clanku
@@ -12,6 +13,8 @@ use App\Forms\ArticleFormFactory;
 final class ArticlesPresenter extends BaseAdminPresenter {
 	/** @var ArticleFormFactory @inject */
 	public $articleForm;
+	/** @var VoteFormFactory @inject */
+	public $voteArticleForm;
 	/** @var \App\Model\Repository\ArticleRepository @inject */
 	public $articleRepository;
 	/** @var \App\Model\Repository\SectionRepository @inject */
@@ -47,12 +50,27 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 	public function handleEditArticle($articleId) {
 		$this->myArticle = $this->articleRepository->getById($articleId);
 		if (!$this->myArticle) {
-			$this->flashMessage($this->translator->translate('system.invalidId'));
+			$this->flashMessage($this->translator->translate('system.invalidId'), self::MESSAGE_DANGER);
+			return;
+		}
+		$this->template->title = $this->translator->translate('system.editPost');
+		$this->template->component = 'manageArticle';
+		$this->redrawControl('formContainer');
+	}
+	
+	/**
+	 * @param int $articleId
+	 * @return void Editace clanku
+	 */
+	public function handleVoteArticle($articleId) {
+		$this->myArticle = $this->articleRepository->getById($articleId);
+		if (!$this->myArticle) {
+			$this->flashMessage($this->translator->translate('system.invalidId'), self::MESSAGE_DANGER);
 			return;
 		}
 		
-		$this->template->title = $this->translator->translate('system.editPost');
-		$this->template->component = 'manageArticle';
+		$this->template->title = $this->translator->translate('system.vote');
+		$this->template->component = 'voteArticle';
 		$this->redrawControl('formContainer');
 	}
 	
@@ -83,7 +101,7 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 		$sections = $this->getSections();
 		$tags = $this->getTags();
 		$form = $this->articleForm->create($this->myArticle, $sections, $tags);
-		$form->setTranslator($this->translator);
+		//$form->setTranslator($this->translator);
 		
 		$form->onValidate[] = function ($form) {
 			if ($form->hasErrors()) {
@@ -96,6 +114,24 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 			$form->getPresenter()->redirect('this');
 		};
 		
+		return $form;
+	}
+	
+	/**
+	 * @return VoteFormFactory Anketa ke clanku
+	 */
+	public function createComponentVoteArticle() {
+		$articleId = isset($this->myArticle) ? $this->myArticle->getId() : NULL;
+		$form = $this->voteArticleForm->create($articleId, []);
+		$form->onValidate[] = function ($form) {
+			if ($form->hasErrors()) {
+				$this->template->component = 'voteArticle';
+				$this->redrawControl('formContainer');
+			}
+		};
+		$form->onSuccess[] = function ($form) {
+			$form->getPresenter()->redirect('this');
+		};
 		return $form;
 	}
 	
@@ -134,10 +170,12 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 		foreach ($articles as $article) {
 			$editLink = $this->link('editArticle!', ['articleId' => $article->getId()]);
 			$deleteLink = $this->link('deleteArticle!', ['articleId' => $article->getId()]);
+			$voteLink = $this->link('voteArticle!', ['articleId' => $article->getId()]);
 			$myArticle = [];
 			$myArticle['DT_RowAttr'] = [
 				'data-editLink' => $editLink,
-				'data-deleteLink' => $deleteLink
+				'data-deleteLink' => $deleteLink,
+				'data-voteLink' => $voteLink
 			];
 			$myArticle[] = $article->getPublishDate()->format('d. m. Y, H:i:s');
 			$myArticle[] = $article->getTitle();

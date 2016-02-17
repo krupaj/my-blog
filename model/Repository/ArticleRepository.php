@@ -128,7 +128,7 @@ class ArticleRepository extends Nette\Object {
 	
 	/**
 	 * @param array $limits
-	 * @return type Vsechny clanky
+	 * @return Entities\Article[] Vsechny clanky
 	 */
 	public function findAllArticles($limits = []) {
 		if (empty($limits)) {

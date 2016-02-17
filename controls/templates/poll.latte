@@ -1,0 +1,26 @@
+{**
+ * Zobrazeni anketni otazky
+ * @param Vote    $vote  Instance s anketni otazkou
+ *}
+
+{block content}
+<section>
+	<h1>{$vote->getQuestion()}</h1>
+	{if $pollForm !== NULL}
+		<p class="help-block">
+			{$vote->getTypeVote()->getDescription()}
+		</p>
+		{control $pollForm}
+	{else}
+		Vysledky
+		{var $result = $vote->getPollResult()}
+		{foreach $result['options'] as $option}
+			<div class="progress">
+				<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="{$option['per']}" aria-valuemin="0" aria-valuemax="100" style="width: {$option['per']}%;">
+					<span class="pull-left">{$option['option']}</span><span class="pull-right">{$option['per']} % </span>
+				</div>
+			</div>
+		{/foreach}
+	{/if}
+</section>
+{/block}
