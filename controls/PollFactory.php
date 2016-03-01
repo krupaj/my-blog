@@ -50,18 +50,41 @@ class PollFactory extends UI\Control {
 	 */
 	public function createComponentPollForm() {
 		$form = $this->baseFormFactory->create();
-		//$typeVote = $this->vote->getTypeVote();
-		
-		foreach ($this->vote->getOptions() as $option) {
-			$form->addCheckbox($option->getId(), $option->getValue());
+		$typeVote = $this->vote->getTypeVote();
+		$typeVoteId = $typeVote->getId();
+		if (in_array($typeVote->getFormType(), ['radio', 'checkbox'])) {
+			$list = $this->getOptionList($this->vote->getOptions());
+			if ($typeVote->getFormType() == 'radio') {
+				$form->addRadioList($typeVoteId, 'options', $list);
+			} elseif ($typeVote->getFormType() == 'checkbox') {
+				$form->addCheckboxList($typeVoteId, 'options', $list);
+			}
+			if ($typeVote->hasOpenOption()) {
+				$form->addText('text', 'text');
+			}
+		} elseif ($typeVote->getFormType() == 'text') {
+			$form->addText($typeVoteId, 'options');
+		} elseif ($typeVote->getFormType() == 'textarea') {
+			$form->addTextArea($typeVoteId, 'options');
 		}
-		
 		$form->addSubmit('send', 'system.save');
 		$form->addHidden('id', $this->vote->getId());
 		
 		$form->onValidate[] = [$this, 'validateForm'];
 		$form->onSuccess[] = [$this, 'formSucceeded'];
 		return $form;
+	}
+	
+	/**
+	 * @param \App\Model\Entities\Option[] $options
+	 * @return array
+	 */
+	protected function getOptionList($options) {
+		$result = [];
+		foreach ($options as $option) {
+			$result[$option->getId()] = $option->getValue();
+		}
+		return $result;
 	}
 	
 	/**

@@ -35,32 +35,16 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 	}
 	
 	/**
-	 * Pozadavek pro pridani noveho clanku
-	 */
-	public function handleNewArticle() {
-		$this->template->title = $this->translator->translate('system.newPost');
-		$this->template->component = 'manageArticle';
-		$this->redrawControl('formContainer');
-	}
-	
-	/**
 	 * @param int $articleId
 	 * @return void Editace clanku
 	 */
 	public function handleEditArticle($articleId) {
-		$this->myArticle = $this->articleRepository->getById($articleId);
-		if (!$this->myArticle) {
-			$this->flashMessage($this->translator->translate('system.invalidId'), self::MESSAGE_DANGER);
-			return;
-		}
-		$this->template->title = $this->translator->translate('system.editPost');
-		$this->template->component = 'manageArticle';
-		$this->redrawControl('formContainer');
+		$this->redirect('edit', ['articleId' => $articleId]);
 	}
 	
 	/**
 	 * @param int $articleId
-	 * @return void Editace clanku
+	 * @return void Propojeni clanku a ankety
 	 */
 	public function handleVoteArticle($articleId) {
 		$this->myArticle = $this->articleRepository->getById($articleId);
@@ -101,7 +85,6 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 		$sections = $this->getSections();
 		$tags = $this->getTags();
 		$form = $this->articleForm->create($this->myArticle, $sections, $tags);
-		//$form->setTranslator($this->translator);
 		
 		$form->onValidate[] = function ($form) {
 			if ($form->hasErrors()) {
@@ -130,7 +113,7 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 			}
 		};
 		$form->onSuccess[] = function ($form) {
-			$form->getPresenter()->redirect('this');
+			$form->getPresenter()->redirect('default');
 		};
 		return $form;
 	}
@@ -213,6 +196,29 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 			$result[$tag->getId()] = $tag->getTitle();
 		}
 		return $result;
+	}
+	
+	/********** action & render NEW **********/
+	
+	public function renderNew() {
+		
+	}
+	
+	/********** action & render EDIT **********/
+	
+	/**
+	 * @param int $articleId
+	 */
+	public function actionEdit($articleId) {
+		$this->myArticle = $this->articleRepository->getById($articleId);
+		if (!$this->myArticle) {
+			$this->flashMessage($this->translator->translate('system.invalidId'), self::MESSAGE_DANGER);
+			$this->redirect('default');
+		}
+	}
+	
+	public function renderEdit() {
+		
 	}
 
 }

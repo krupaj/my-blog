@@ -45,6 +45,30 @@ class TypeVote {
 	 * @var ArrayCollection Vote[]
 	 */
 	protected $votes;
+	
+	/**
+	 * @ORM\Column(type="smallint", name="option_count", nullable=true, unique=false)
+	 * @var int Pocet moznych odpovedi na otazku
+	 */
+	protected $optionCount;
+	
+	/**
+	 * @ORM\Column(type="smallint", name="pick_option_count", nullable=true, unique=false)
+	 * @var int Pocet moznych vybranych odpovedi na otazku
+	 */
+	protected $pickOptionCount;
+	
+	/**
+	 * @ORM\Column(type="boolean", name="open_option", nullable=true, unique=false)
+	 * @var boolean Pridat k moznostem otevrenou odpoved?
+	 */
+	protected $openOption;
+	
+	/**
+	 * @ORM\Column(type="string", name="form_type", nullable=true, unique=false)
+	 * @var string Typ formularoveho inputu
+	 */
+	protected $formType;
 
 	/**
 	 * @param string $name
@@ -79,7 +103,7 @@ class TypeVote {
 	
 	/**
 	 * @param int|NULL $length
-	 * @return string
+	 * @return string Napovedny text k vyplneni otazky
 	 */
 	public function getDescription($length=NULL) {
 		if ($length !== NULL) {
@@ -95,5 +119,32 @@ class TypeVote {
 		return $this->votes;
 	}
 	
+	/**
+	 * @return int Pocet moznosti (odpovedi) otazky
+	 */
+	public function getOptionCount() {
+		return $this->optionCount;
+	}
+	
+	/**
+	 * @return int Pocet vybranych moznosti
+	 */
+	public function getPickOptionCount() {
+		return $this->pickOptionCount;
+	}
+	
+	/**
+	 * @return boolean Ma otazka navic otevrenou odpoved?
+	 */
+	public function hasOpenOption() {
+		return $this->openOption;
+	}
+	
+	/**
+	 * @return string Nazev formularoveho inputu
+	 */
+	public function getFormType() {
+		return $this->formType;
+	}
 }
 

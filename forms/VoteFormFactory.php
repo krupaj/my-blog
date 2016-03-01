@@ -6,6 +6,9 @@ use Nette\Utils\DateTime;
 use Nette\Application\UI\Form;
 use Nette\Forms\Container;
 
+/**
+ * Form pro zalozeni nove anketni otazky
+ */
 class VoteFormFactory extends Nette\Object {
 	/** @var \App\Model\Repository\VoteRepository */
 	private $repository;
@@ -17,7 +20,7 @@ class VoteFormFactory extends Nette\Object {
 	private static $dateMask = 'd. m. Y, H:i';
 	
 	/**
-	 
+	 * @param \App\Model\Repository\VoteRepository $repository
 	 * @param BaseFormFactory $baseFormFactory Tovarna se zakladni formularem
 	 */
 	public function __construct(\App\Model\Repository\VoteRepository $repository, BaseFormFactory $baseFormFactory) {	
@@ -25,11 +28,10 @@ class VoteFormFactory extends Nette\Object {
 		$this->repository = $repository;
 		$this->em = $repository->getEntityManager();
 	}
-
-
+	
 	/**
 	 * @param array $types
-	 * 
+	 * @param \App\Model\Entities\Vote $vote
 	 * @return Form 
 	 */
 	public function create($types, $vote=NULL) {
@@ -72,8 +74,6 @@ class VoteFormFactory extends Nette\Object {
 		$form->onSuccess[] = [$this, 'formSucceeded'];
 		return $form;
 	}
-	
-	
 	
 	/**
 	 * Validace formulare se clankem: datum zverejneni

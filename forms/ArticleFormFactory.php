@@ -60,7 +60,8 @@ class ArticleFormFactory extends Nette\Object {
 				->setItems($tags);
 	
 		$form->addUpload('image', 'system.postImage')
-				->addRule(Form::IMAGE, $form->getTranslator()->translate('system.formImage', ['label' => '%label']));
+				->addCondition(Form::FILLED)
+					->addRule(Form::IMAGE, $form->getTranslator()->translate('system.formImage', ['item' => '%label']));
 		
 		$form->addTextArea('content', 'system.postContent')
 				->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']))
@@ -91,7 +92,10 @@ class ArticleFormFactory extends Nette\Object {
 			$item = $form->getTranslator()->translate('system.published');
 			$form->addError($form->getTranslator()->translate('system.formFormat', ['item' => $item, 'format' => self::$dateMask]));
 		}
-		$image = $values->image;
+		$image = NULL;
+		if ($values->image->isImage()) {
+			$image = $values->image;
+		}
 		if (!empty($image) && (!$image->isOk() || !$image->isImage())) {
 			$item = $form->getTranslator()->translate('system.postImage');
 			$form->addError($form->getTranslator()->translate('system.formImage', ['item' => $item]));
@@ -135,7 +139,9 @@ class ArticleFormFactory extends Nette\Object {
 				$tag = $this->em->getReference(\App\Model\Entities\Tag::class, $tagId);
 				$newArticle->addTag($tag);	
 			}
-			if (!empty($values->image)) {
+			$section = $this->em->getReference(\App\Model\Entities\Section::class, $values->section);
+			$newArticle->setSection($section);
+			if ($values->image->isImage()) {
 				$this->imageStorage->setArticleImage($newArticle, $values->image->toImage());
 			}
 			$this->em->persist($newArticle);
@@ -164,13 +170,19 @@ class ArticleFormFactory extends Nette\Object {
 			$editArticle->setTitle($values->title);
 			$editArticle->setUpdateDate();
 			$editArticle->setPublishDate($values->publishDate);
+			$editArticle->setDescription($values->description);
+			$editArticle->setContent($values->content);
 			$tags = [];
 			foreach ($values->tags as $tagId) {
 				$tag = $this->em->getReference(\App\Model\Entities\Tag::class, $tagId);
 				$tags[$tagId] = $tag;
 			}
 			$editArticle->setTags($tags);
-			if (!empty($values->image)) {
+			
+			$section = $this->em->getReference(\App\Model\Entities\Section::class, $values->section);
+			$editArticle->setSection($section);
+			
+			if ($values->image->isImage()) {
 				$this->imageStorage->setArticleImage($editArticle, $values->image->toImage());
 			}
 			//ulozeni zmeny

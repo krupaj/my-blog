@@ -1,6 +1,6 @@
 {* Konkretni clanku blogu *}
 {block content}
-<div class="col-lg-8 col-lg-offset-1 col-md-10 col-md-offset-1">
+<div class="col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1">
 	<article>
 		{$article->getContent()|noescape|texy}
 		<div n:if="$article->hasTags()" >
@@ -9,7 +9,7 @@
 					<i class="glyphicon glyphicon-tag"></i> 
 					<a n:href="Homepage:tag id => $tag->getWebId()">{$tag->getTitle()}</a>
 				</span>
-			{/foreach}
+			{/foreach} 
 		</div>
 	</article>
 	{foreach $votes as $vote}
@@ -19,9 +19,6 @@
 	<article>
 		{control comments}
 	</article>
-</div>
-<div class="col-lg-3 col-md-6 col-md-offset-1">
-	
 </div>
 {/block}
 

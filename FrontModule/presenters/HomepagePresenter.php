@@ -85,7 +85,6 @@ final class HomepagePresenter extends BaseFrontPresenter {
 	}
 	
 	public function renderPost() {
-		$this->template->bgImage = $this->article->getImage();
 		$this->template->article = $this->article;
 		$this->template->votes = $this->article->getVotes();
 	}
@@ -98,6 +97,11 @@ final class HomepagePresenter extends BaseFrontPresenter {
 		return $component;
 	}
 	
+	/**
+	 * Form pro hlasovani v ankete
+	 * @param int $voteId
+	 * @return \Nette\Application\UI\Multiplier
+	 */
 	public function createComponentVote() {
 		return new \Nette\Application\UI\Multiplier(function($voteId) {
 			$component = $this->pollFactory->create();

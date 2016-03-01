@@ -1,21 +1,38 @@
-{* Manage articles admin page *}
+{* Seznam prirazenych a dosupnych clanku *}
 
 {block content}
 <div class="row">
-	<div class="col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1">
+	<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 		<h2 n:block=title>{_system.post, 2}</h2>
-		{*toolbar - tlacitka*}
-		<div class="btn-group pull-right" role="group">
-			<a n:href='Articles:new' type="button" class="btn btn-default">{_system.new}</a>
-		</div>
+		<h3> Prirazene </h3>
+			<table class="table dataTable">
+				<thead>
+					<tr>
+						<th>Nazev</th>
+						<th>Datum</th>
+						<th> </th>
+					</tr>
+					<tr n:foreach="$articles as $article">
+						<td>{$article->getTitle()}</td>
+						<td>{$artilce->getPublishDate()}</td>
+						<td>
+							<a n:href="deleteArticleVote! articleId => $article->getId()" class="btn btn-default pull-right">
+								<i class="glyphicon glyphicon-minus">
+							</a>
+						</td>
+					</tr>
+				</thead>
+				<tbody>
+					{*Naplni se pres datatables*}
+				</tbody>
+			</table>
+		<h3>Neprirazene</h3>
 		{*tabulka - DataTables*}
 		<table class="table" id="articles">
 			<thead>
 				<tr>
+					<th>Nazev</th>
 					<th>Datum</th>
-					<th>{_system.title}</th>
-					<th>{_system.section, 1}</th>
-					<th>Publikováno</th>
 					<th> </th>
 				</tr>
 			</thead>
@@ -46,32 +63,24 @@ $(document).ready(function() {
 			targets: -1,
 			orderable: false,
 			data: null,
-			defaultContent: "<div class=\"btn-group pull-right\"> \
-						<button type=\"button\" class=\"btn btn-default dropdown-toggle data-opt-pre\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\"> \
-						Nahled <span class=\"caret\"></span> \
-						</button> \
-						<ul class=\"dropdown-menu\"> \
-							<li><a href=\"#\" class='data-opt-edit'>Editovat</a></li> \
-							<li><a href=\"#\" class='data-opt-vote'>Anketa</a></li> \
-							<li role=\"separator\" class=\"divider\"></li> \
-							<li><a href=\"#\" class='data-opt-del'>Smazat</a></li> \
-						</ul> \
-					</div>"
+			defaultContent: "<button type=\"button\" class=\"btn btn-default data-opt-add pull-right\"> \
+					<i class=\"glyphicon glyphicon-plus\"></i> \
+				</button>"
 		}]
     });
 	
-	$('#articles tbody').on('click', '.data-opt-edit', function(event){
+	$('#articles tbody').on('click', '.data-opt-add', function(event){
 		event.preventDefault();
-		var editLink = $(this).parents('tr').attr('data-editLink');
+		var editLink = $(this).parents('tr').attr('data-addLink');
 		doRequest(editLink);
 	});
-	$('#articles tbody').on('click', '.data-opt-vote', function(event){
+	$('#votes tbody').on('click', '.data-opt-vote', function(event){
 		event.preventDefault();
 		var editLink = $(this).parents('tr').attr('data-voteLink');
 		doRequest(editLink);
 	});
 	
-	$('#articles tbody').on('click', '.data-opt-del', function(event){
+	$('#votes tbody').on('click', '.data-opt-del', function(event){
 		event.preventDefault();
 		var delLink = $(this).parents('tr').attr('data-deleteLink');
 		var result = confirm('Smazat?');

@@ -67,7 +67,7 @@ class Article {
 	 * @ORM\Column(type="integer", nullable=false)
 	 * @var int Poce zobrazeni clanku 
 	 */
-	protected $counter;
+	protected $counter = 1;
 	
 	/**
 	 * @ORM\ManyToOne(targetEntity="App\Model\Entities\Section", inversedBy="articles")
@@ -101,7 +101,7 @@ class Article {
 	private $comments;
 	
 	/**
-	 * @ORM\ManyToMany(targetEntity="App\Model\Entities\Vote", cascade={"persist"})
+	 * @ORM\ManyToMany(targetEntity="App\Model\Entities\Vote", inversedBy="articles", cascade={"persist"})
 	 * @ORM\JoinTable(name="article_vote",
      *      joinColumns={@ORM\JoinColumn(name="article_id", referencedColumnName="article_id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="vote_id", referencedColumnName="vote_id")}
@@ -132,7 +132,6 @@ class Article {
 		$this->content = $content;
 		$this->setPublishDate($publishDate);
 		$this->setPublished($published);
-		
 	}
 	
 	/**
@@ -348,10 +347,10 @@ class Article {
 	}
 	
 	/**
-	 * @param int $sectionid
+	 * @param Section $section
 	 */
-	public function setSection($sectionid = NULL) {
-		$this->section = $sectionid;
+	public function setSection(Section $section) {
+		$this->section = $section;
 	}
 	
 	/**

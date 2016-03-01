@@ -65,6 +65,16 @@ class Vote {
 	 * @var ArrayCollection Poll[]
 	 */
 	protected $polls;
+	
+	/**
+	 * @ORM\ManyToMany(targetEntity="App\Model\Entities\Article", mappedBy="votes")
+	 * @ORM\JoinTable(name="article_vote",
+     *      joinColumns={@ORM\JoinColumn(name="vote_id", referencedColumnName="vote_id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="article_id", referencedColumnName="article_id", unique=true)}
+     *      )
+	 * @var ArrayCollection Article[]
+	 */
+	protected $articles;
 
 	/**
 	 * @param string $question
@@ -73,6 +83,7 @@ class Vote {
 		$this->question = $question;
 		$this->options = new ArrayCollection;
 		$this->polls = new ArrayCollection;
+		$this->articles = new ArrayCollection;
 	}
 	
 	public function setQuestion($question) {
@@ -228,6 +239,37 @@ class Vote {
 			$result['options'][$optionId]['per'] = ($perTotal * $option['total'] );
 		}
 		return $result;
+	}
+	
+	/**
+	 * Vraci clanky asociovane s anketou
+	 * @return Article[]
+	 */
+	public function getArticles() {
+		if ($this->articles === NULL) {
+			$this->articles = new ArrayCollection;
+		}
+		return $this->articles;
+	}
+	
+	/**
+	 * Pridava propojeni clanku a ankety
+	 * @param \App\Model\Entities\Article $article
+	 */
+	public function addArticle(Article $article) {
+		if (!$this->getArticles()->contains($article)) {
+			$this->articles->add($article);
+		}
+	}
+	
+	/**
+	 * Odstranuje propojeni clanku a ankety
+	 * @param \App\Model\Entities\Article $article
+	 */
+	public function removeArticle(Article $article) {
+		if ($this->getArticles()->contains($article)) {
+			$this->articles->removeElement($article);
+		}
 	}
 }
 

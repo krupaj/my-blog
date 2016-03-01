@@ -14,6 +14,8 @@ final class VotesPresenter extends BaseAdminPresenter {
 	public $voteForm;
 	/** @var \App\Model\Repository\VoteRepository @inject */
 	public $voteRepository;
+	/** @var Model\Repository\ArticleRepository @inject */
+	public $articleRepository;
 	/** @var Model\Entities\Vote */
 	private $myVote;
 	/** Model\Entities\TypeVote[] */
@@ -160,8 +162,8 @@ final class VotesPresenter extends BaseAdminPresenter {
 	public function actionEdit($voteId) {
 		$this->myVote = $this->voteRepository->getById($voteId);
 		if (!$this->myVote) {
-			$this->error($this->translator->translate('system.invalidId'));
-			//$this->flashMessage($this->translator->translate('system.invalidId'), self::MESSAGE_DANGER);
+			$this->flashMessage($this->translator->translate('system.invalidId'), self::MESSAGE_DANGER);
+			$this->redirect('default');
 		}
 	}
 	
@@ -169,5 +171,86 @@ final class VotesPresenter extends BaseAdminPresenter {
 		
 	}
 	
-
+	/********** action & render ARTICLES **********/
+	
+	/**
+	 * @param int $voteId vote_id, pkey ankety
+	 */
+	public function actionArticles($voteId) {
+		$this->myVote = $this->voteRepository->getById($voteId);
+		if (!$this->myVote) {
+			$this->flashMessage($this->translator->translate('system.invalidId'), self::MESSAGE_DANGER);
+			$this->redirect('default');
+		}
+	}
+	
+	public function renderArticles() {
+		$this->template->articles = $this->myVote->getArticles();
+	}
+	
+	public function handleProcessArticles() {
+		$offset = $this->getParameter('start', 0);
+		$limit = $this->getParameter('length', 10);
+		$draw = $this->getParameter('draw', 1);
+		
+		$limits = [
+			'limit' => $limit,
+			'offset' => $offset
+		];
+		$total = $this->articleRepository->countAllArticles();
+		$myArticles = $this->articleRepository->findAllArticles($limits);
+		
+		$articles = $this->parseArticles($myArticles);
+		
+		$answer = [
+			'draw' => $draw,
+			'recordsTotal' => $total,
+			'recordsFiltered' => $total,
+			'data' => $articles
+		];
+		$this->sendJson($answer);
+	}
+	
+	/**
+	 * Prevod clanku do pole kvuli DataTables
+	 * @param Model\Entities\Article[] $articles
+	 * @return array
+	 */
+	protected function parseArticles($articles) {
+		$result = [];
+		foreach ($articles as $article) {
+			$addLink = $this->link('addArticleVote!', ['articleId' => $article->getId()]);
+			$deleteLink = $this->link('deleteArticleVote!', ['articleId' => $article->getId()]);
+			
+			$myArticle = [];
+			$myArticle['DT_RowAttr'] = [
+				'data-addLink' => $addLink,
+				'data-deleteLink' => $deleteLink,
+			];
+			$myArticle[] = $article->getTitle();
+			$myArticle[] = $article->getPublishDate();
+			$myArticle[] = ''; //potreba kvuli tlacitkum
+			$result[] = $myArticle;
+		}
+		return $result;
+	}
+	
+	public function handleAddArticleVote($articleId) {
+		$em = $this->articleRepository->getEntityManager();
+		$addArticle = $em->getReference(Model\Entities\Article::class, $articleId);
+		
+		$this->myVote->addArticle($addArticle);
+		$this->flashMessage($this->translator->translate('system.requestS'), self::MESSAGE_SUCCESS);
+		$this->redirect('this');
+	}
+	
+	public function handleDeleteArticleVote($articleId) {
+		$em = $this->articleRepository->getEntityManager();
+		$rArticle = $em->getReference(Model\Entities\Article::class, $articleId);
+		
+		$this->myVote->removeArticle($rArticle);
+		$this->redirect('this');
+		
+	}
+	
 }
