@@ -21,6 +21,7 @@ final class TagsPresenter extends BaseAdminPresenter {
 	
 	public function renderDefault() {
 		$this->template->tags = $this->getTags();
+		$this->template->title = $this->translator->translate('system.tag', 2);
 	}
 	
 	/**

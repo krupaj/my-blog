@@ -12,6 +12,11 @@ final class SignPresenter extends \App\Presenters\BasePresenter {
 	public function __construct(SignFormFactory $signFactory) {
 		$this->signFactory = $signFactory;
 	}
+	
+	public function actionIn() {
+		$this->template->title = $this->translator->translate('system.signIn');
+	}
+	
 	/**
 	 * Sign-in form factory na prihlaseni uzivatele.
 	 * @return Nette\Application\UI\Form

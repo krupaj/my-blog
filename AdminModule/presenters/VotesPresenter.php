@@ -26,7 +26,7 @@ final class VotesPresenter extends BaseAdminPresenter {
 	}
 
 	public function renderDefault() {
-		
+		$this->template->title = $this->translator->translate('system.vote', 2);
 	}
 	
 	public function handleEditVote($voteId) {
@@ -151,7 +151,7 @@ final class VotesPresenter extends BaseAdminPresenter {
 	}
 	
 	public function renderNew() {
-		
+		$this->template->title = $this->translator->translate('system.new');
 	}
 	
 	/********** action & render EDIT **********/
@@ -168,7 +168,7 @@ final class VotesPresenter extends BaseAdminPresenter {
 	}
 	
 	public function renderEdit() {
-		
+		$this->template->title = $this->translator->translate('system.edit');
 	}
 	
 	/********** action & render ARTICLES **********/

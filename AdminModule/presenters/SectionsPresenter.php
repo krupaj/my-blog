@@ -20,6 +20,7 @@ final class SectionsPresenter extends BaseAdminPresenter {
 	private $mySections;
 	
 	public function renderDefault() {
+		$this->template->title = $this->translator->translate('system.section', 2);
 		$this->template->sections = $this->getSections();
 	}
 	

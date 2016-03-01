@@ -15,6 +15,8 @@
 	<!-- Bootstrap Core CSS -->
     <link href="{$basePath}/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="shortcut icon" href="{$basePath}/favicon.ico">
+	<!-- Custom CSS -->
+	<link href="{$basePath}/css/clean-blog.css" rel="stylesheet">
 	
 	{block head}{/block}
 </head>
@@ -59,14 +61,12 @@
         <!-- /.container -->
     </nav>
 	<!-- Page Header -->
-    <header class="intro-header">
+    <header class="intro-header" style="padding-bottom: 0px;">
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                    <div class="site-heading">
-                        <h1 n:block="title">{*$title*}</h1>
-                        <hr class="small">
-                        <span class="subheading">{*$description*}</span>
+                    <div class="site-heading" n:ifset='$title'>
+                        <span class="subheading">{$title}</span>
                     </div>
                 </div>
             </div>

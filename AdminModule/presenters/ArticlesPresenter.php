@@ -31,7 +31,8 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 		
 	}
 
-	public function renderDefault() {
+	public function actionDefault() {
+		$this->template->title = $this->translator->translate('system.post', 2);
 	}
 	
 	/**
@@ -40,6 +41,14 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 	 */
 	public function handleEditArticle($articleId) {
 		$this->redirect('edit', ['articleId' => $articleId]);
+	}
+	
+	/**
+	 * @param int $articleId
+	 * @return void Nahled clanku
+	 */
+	public function handlePreviewArticle($articleId) {
+		$this->redirect(':Front:Homepage:Post', ['id' => $articleId]);
 	}
 	
 	/**
@@ -154,11 +163,13 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 			$editLink = $this->link('editArticle!', ['articleId' => $article->getId()]);
 			$deleteLink = $this->link('deleteArticle!', ['articleId' => $article->getId()]);
 			$voteLink = $this->link('voteArticle!', ['articleId' => $article->getId()]);
+			$preLink = $this->link('previewArticle!', ['articleId' => $article->getWebId(5)]);
 			$myArticle = [];
 			$myArticle['DT_RowAttr'] = [
 				'data-editLink' => $editLink,
 				'data-deleteLink' => $deleteLink,
-				'data-voteLink' => $voteLink
+				'data-voteLink' => $voteLink,
+				'data-preLink' => $preLink
 			];
 			$myArticle[] = $article->getPublishDate()->format('d. m. Y, H:i:s');
 			$myArticle[] = $article->getTitle();
@@ -200,8 +211,8 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 	
 	/********** action & render NEW **********/
 	
-	public function renderNew() {
-		
+	public function actionNew() {
+		$this->template->title = $this->translator->translate('system.newPost');
 	}
 	
 	/********** action & render EDIT **********/
@@ -215,6 +226,7 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 			$this->flashMessage($this->translator->translate('system.invalidId'), self::MESSAGE_DANGER);
 			$this->redirect('default');
 		}
+		$this->template->title = $this->translator->translate('system.editPost');
 	}
 	
 	public function renderEdit() {

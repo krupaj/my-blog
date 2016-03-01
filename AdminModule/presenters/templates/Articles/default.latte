@@ -3,7 +3,6 @@
 {block content}
 <div class="row">
 	<div class="col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1">
-		<h2 n:block=title>{_system.post, 2}</h2>
 		{*toolbar - tlacitka*}
 		<div class="btn-group pull-right" role="group">
 			<a n:href='Articles:new' type="button" class="btn btn-default">{_system.new}</a>
@@ -47,8 +46,11 @@ $(document).ready(function() {
 			orderable: false,
 			data: null,
 			defaultContent: "<div class=\"btn-group pull-right\"> \
-						<button type=\"button\" class=\"btn btn-default dropdown-toggle data-opt-pre\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\"> \
-						Nahled <span class=\"caret\"></span> \
+						<button type=\"button\" class=\"btn btn-default data-opt-pre\"> \
+						Nahled \
+						</button> \
+						<button class=\"btn btn-default dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">\
+							<span class=\"caret\"></span>\
 						</button> \
 						<ul class=\"dropdown-menu\"> \
 							<li><a href=\"#\" class='data-opt-edit'>Editovat</a></li> \
@@ -65,6 +67,13 @@ $(document).ready(function() {
 		var editLink = $(this).parents('tr').attr('data-editLink');
 		doRequest(editLink);
 	});
+	
+	$('#articles tbody').on('click', '.data-opt-pre', function(event){
+		event.preventDefault();
+		var editLink = $(this).parents('tr').attr('data-preLink');
+		doRequest(editLink);
+	});
+	
 	$('#articles tbody').on('click', '.data-opt-vote', function(event){
 		event.preventDefault();
 		var editLink = $(this).parents('tr').attr('data-voteLink');

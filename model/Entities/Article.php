@@ -143,10 +143,11 @@ class Article {
 	
 	/**
 	 * Identifikator pro web url ve tvaru: ID-WEBTITLE
+	 * @param int $length Delka titulku, ktery se pouzije pro cool url
 	 * @return string 
 	 */
-	public function getWebId() {
-		$myWebIdentifier = $this->getId() . '-' . $this->getWebalizeTitle(50);
+	public function getWebId($length = 50) {
+		$myWebIdentifier = $this->getId() . '-' . $this->getWebalizeTitle($length);
 		return $myWebIdentifier;
 	}
 	
