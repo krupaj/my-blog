@@ -50,6 +50,9 @@ class ArticleRepository extends Nette\Object {
 	 * @return object|null
 	 */
 	public function getById($id) {
+		if (empty($id)) {
+			return NULL;
+		}
 		return $this->myArticleRepository->find($id);
 	}
 	

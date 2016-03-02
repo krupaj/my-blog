@@ -209,7 +209,10 @@ class ArticleFormFactory extends Nette\Object {
 			$result['publishDate'] = $publishDate->format('d. m. Y, H:i');
 		}
 		$result['content'] = $article->getContent();
-		$result['section'] = $article->getSection()->getId();
+		if ($article->getSection() !== NULL) {
+			$result['section'] = $article->getSection()->getId();
+		}
+		
 		foreach ($article->getTags() as $tag) {
 			$result['tags'][] = $tag->getId();
 		}

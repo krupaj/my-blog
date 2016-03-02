@@ -173,7 +173,11 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 			];
 			$myArticle[] = $article->getPublishDate()->format('d. m. Y, H:i:s');
 			$myArticle[] = $article->getTitle();
-			$myArticle[] = $article->getSection()->getTitle();
+			if ($article->getSection() === NULL) {
+				$myArticle[] = FALSE;
+			} else {
+				$myArticle[] = $article->getSection()->getTitle();
+			}
 			$myArticle[] = $article->isPublished();
 			$myArticle[] = ''; //potreba kvuli tlacitkum
 			$result[] = $myArticle;

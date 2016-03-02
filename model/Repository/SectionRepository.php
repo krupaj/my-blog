@@ -60,7 +60,7 @@ class SectionRepository extends Nette\Object {
 	 * @param \App\Model\Entities\Section $section
 	 * @return boolean
 	 */
-	public function deleteArticle(Entities\Section $section) {
+	public function deleteSection(Entities\Section $section) {
 		try {
 			$this->em->remove($section);
 			$result = $this->em->flush();

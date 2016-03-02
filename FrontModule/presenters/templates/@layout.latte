@@ -91,7 +91,7 @@
                         <span class="meta">
 							{_system.published} <abbr title="{$article->getPublishDate()|date:'%d.%m.%Y, %H:%M'}">{$article->getPublishDate()|ago}</abbr>
 							{if $article->isUpdated()} (<abbr title="{$article->getUpdateDate()|date:'%d.%m.%Y, %H:%M'}">{_system.updateOn}</abbr>) {/if}
-							{_system.inSection} <a n:href="section id=>$article->getSection()->getWebalizeTitle()">{$article->getSection()->getTitle()}</a>
+							{if $article->getSection()} {_system.inSection} <a n:href="section id=>$article->getSection()->getWebalizeTitle()">{$article->getSection()->getTitle()}</a> {/if}
 						</span>
                     </div>
                 </div>
