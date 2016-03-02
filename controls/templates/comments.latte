@@ -10,6 +10,9 @@
 <div class="panel post">
 	<div class="post-footer">
 		<div class="row">
+			<div class="col-xs-10">
+				<h3> {_system.commentAdd} </h3>
+			</div>
 			<div class="col-xs-6">
 			{form form}
 				<ul class="bg-danger" n:if="$form->hasErrors()">
@@ -38,16 +41,12 @@
 					<pre>
 *kurzíva*
 **tučné**
-"odkaz":http://example.com
-
-/--php
-phpkod();
-\--
-					</pre>
+"odkaz":http://example.com</pre>
 				</p>
 			</div>
 		</div>
 		<ul class="comments-list">
+			<h3> {_system.comments} </h3>
 			<li class="comment" n:foreach="$comments as $comment">
 				{continueIf $comment->isReply()}
 				<div class="comment-body">
