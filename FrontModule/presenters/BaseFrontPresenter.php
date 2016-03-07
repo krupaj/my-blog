@@ -21,8 +21,12 @@ abstract class BaseFrontPresenter extends Presenters\BasePresenter {
 
 	public function beforeRender() {
 		//nastaveni spravne cesty k obrazkum pro Texy
-		//$this->texy->imageModule->root = $this->template->basePath . '/images/'; 
-		$this->texy->imageModule->root = '/images/'; 
+		$this->texy->imageModule->root = $this->template->basePath . '/images/'; 
+		$this->texy->setOutputMode(\Texy\Texy::HTML5); 
+		$this->texy->figureModule->leftClass = 'pull-left';
+		$this->texy->figureModule->rightClass = 'pull-right';
+		$this->texy->imageModule->leftClass = 'pull-left';
+		$this->texy->imageModule->rightClass = 'pull-right';
 		
 		$this->template->today = new \Nette\Utils\DateTime();
 		$this->template->sections = $this->sectionRepository->getAllSections();
