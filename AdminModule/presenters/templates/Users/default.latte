@@ -1,21 +1,18 @@
-{* Manage articles admin page *}
+{* Manage users admin page *}
 
 {block content}
 <div class="row">
 	<div class="col-md-12">
 		{*toolbar - tlacitka*}
 		<div class="btn-group pull-right" role="group">
-			<a n:href='Articles:new' type="button" class="btn btn-default">{_system.new}</a>
+			<a n:href='Users:new' type="button" class="btn btn-default">{_system.new}</a>
 		</div>
 		{*tabulka - DataTables*}
-		<table class="table" id="articles">
+		<table class="table" id="users">
 			<thead>
 				<tr>
-					<th>Datum</th>
-					<th>{_system.title}</th>
-					<th>{_system.section, 1}</th>
-					<th>Publikováno</th>
-					<th>Zobrazeno</th>
+					<th>Login</th>
+					<th>Role</th>
 					<th> </th>
 				</tr>
 			</thead>
@@ -34,11 +31,11 @@
 {block scripts}
 {include parent}
 <script>
-var link = {link processArticles!};	
+var link = {link processUsers!};	
 //https://datatables.net/examples/ajax/null_data_source.html
 		
 $(document).ready(function() {
-    $('#articles').DataTable({
+    $('#users').DataTable({
         processing: true,
         serverSide: true,
         ajax: link,
@@ -47,37 +44,22 @@ $(document).ready(function() {
 			orderable: false,
 			data: null,
 			defaultContent: "<div class=\"btn-group pull-right\"> \
-						<button type=\"button\" class=\"btn btn-default data-opt-pre\"> \
-						Nahled \
+						<button type=\"button\" class=\"btn btn-default data-opt-edit\"> \
+						Editovat \
 						</button> \
 						<button class=\"btn btn-default dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">\
 							<span class=\"caret\"></span>\
 						</button> \
 						<ul class=\"dropdown-menu\"> \
-							<li><a href=\"#\" class='data-opt-edit'>Editovat</a></li> \
-							<li><a href=\"#\" class='data-opt-vote'>Anketa</a></li> \
-							<li role=\"separator\" class=\"divider\"></li> \
 							<li><a href=\"#\" class='data-opt-del'>Smazat</a></li> \
 						</ul> \
 					</div>"
 		}]
     });
 	
-	$('#articles tbody').on('click', '.data-opt-edit', function(event) {
+	$('#users tbody').on('click', '.data-opt-edit', function(event) {
 		event.preventDefault();
 		var editLink = $(this).parents('tr').attr('data-editLink');
-		doRequest(editLink);
-	});
-	
-	$('#articles tbody').on('click', '.data-opt-pre', function(event) {
-		event.preventDefault();
-		var editLink = $(this).parents('tr').attr('data-preLink');
-		doRequest(editLink);
-	});
-	
-	$('#articles tbody').on('click', '.data-opt-vote', function(event) {
-		event.preventDefault();
-		var editLink = $(this).parents('tr').attr('data-voteLink');
 		doRequest(editLink);
 	});
 	

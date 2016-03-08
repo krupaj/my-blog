@@ -33,15 +33,22 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" n:href="Dashboard:default"> <span class="glyphicon glyphicon-home"></span></a>
-				<a class="navbar-brand" n:href=":Front:Homepage:default" target="_blank"> <span class="glyphicon glyphicon-globe"></span></a>
+                <a class="navbar-brand" n:href="Dashboard:default"> 
+					<span class="glyphicon glyphicon-home"></span>
+				</a>
+				<a class="navbar-brand" n:href=":Front:Homepage:default" target="_blank"> 
+					<span class="glyphicon glyphicon-globe"></span>
+				</a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Redakce <span class="caret"></span></a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+							<i class="glyphicon glyphicon-book"></i> Redakce 
+							<span class="caret"></span>
+						</a>
 						<ul class="dropdown-menu">
 							<li><a n:href="Articles:default">{_system.post, 2}</a></li>
 							<li><a n:href="Sections:default">{_system.section, 2}</a></li>
@@ -49,11 +56,36 @@
 							<li><a n:href="Votes:default">{_system.vote, 2}</a></li>
 						</ul>
                     </li>
-                    <li>
-                        <a href="{$basePath}/adminer/">Databáze</a>
+					<li>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+							<i class="glyphicon glyphicon-wrench"></i> Systém 
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu">
+							<li><a n:href="Users:default">{_system.user, 2}</a></li>
+						</ul>
                     </li>
-					<li n:if="$user->isLoggedIn()">
-                        <a n:href="Sign:out">{_system.logout}</a>
+                    <li>
+                        {* moznosti uzivatele *}
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+							<i class="glyphicon glyphicon-user"></i>
+							{if $user->loggedIn}
+								{var $uData = $user->identity->getData();}
+								{$uData['login']} 
+							{else}
+								{_system.credentialsGuest}
+							{/if} 
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu">
+							{if $user->loggedIn}
+								<li><a n:href="Users:edit userId => $user->id">{_system.userProfile}</a></li>
+								<li class="divider"></li>
+								<li><a n:href="Sign:out">{_system.logout}</a></li>
+							{else}
+								<li><a n:href="Sign:in">{_system.signIn}</a></li>
+							{/if}
+						</ul>
                     </li>
                 </ul>
             </div>

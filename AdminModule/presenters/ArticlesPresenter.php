@@ -105,7 +105,6 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 		$form->onSuccess[] = function ($form) {
 			$form->getPresenter()->redirect('this');
 		};
-		
 		return $form;
 	}
 	
@@ -179,6 +178,7 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 				$myArticle[] = $article->getSection()->getTitle();
 			}
 			$myArticle[] = $article->isPublished();
+			$myArticle[] = $article->getCounter();
 			$myArticle[] = ''; //potreba kvuli tlacitkum
 			$result[] = $myArticle;
 		}

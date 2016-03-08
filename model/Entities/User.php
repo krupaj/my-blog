@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Model\Entities;
 
 use Doctrine\ORM\Mapping AS ORM;
@@ -25,7 +24,6 @@ class User {
 	 * @var int 
 	 */
 	protected $id;
-
 
 	/**
 	 * @ORM\Column(type="string", nullable=false, unique=true)
@@ -91,6 +89,16 @@ class User {
 	 */
 	public function setPassword($password) {
 		$this->password = Passwords::hash($password);
+	}
+	
+	/**
+	 * Nastaveni prihlasovaciho jmena
+	 * @param string $login
+	 */
+	public function setLogin($login) {
+		if ($this->getLogin() != $login) {
+			$this->login = $login;
+		}
 	}
 	
 	/**
