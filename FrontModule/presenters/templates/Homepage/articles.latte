@@ -2,7 +2,7 @@
 
 {block content}
 <div class="row">
-	<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+	<div class="col-lg-8 col-md-10">
 		<div  n:snippet="posts" data-ajax-append="true">
 			{foreach $news as $new}
 			<div class="post-preview">
@@ -29,6 +29,38 @@
 					<a n:href="setPage! page=>$paginator->page+1" class="ajax">{_system.nextPost} &rarr;</a>
 				</li>
 			</ul>
+		</div>
+	</div>
+	<div class="col-lg-3 col-lg-offset-1 post-summary">
+		<div n:ifset="$rPosts">
+			{foreach $rPosts as $rPost}
+			<h3 class="text-uppercase text-info"> Nejčtenější </h3>
+			<a n:href="post id => $rPost->getWebId()">
+				<h4>{$rPost->getTitle()} <small>{$rPost->getDescription(200)}</small>
+				</h4>
+			</a>
+			{/foreach}
+			<hr>
+		</div>
+		<div n:ifset="$dPosts">
+			{foreach $dPosts as $dPost}
+			<h3 class="text-uppercase text-info"> Nejvíce diskutovaný </h3>
+			<a n:href="post id => $dPost->getWebId()">
+				<h4>{$dPost->getTitle()} <small>{$dPost->getDescription(200)}</small>
+				</h4>
+			</a>
+			{/foreach}
+			<hr>
+		</div>
+		<div n:ifset="$nPosts">
+			{foreach $nPosts as $nPost}
+			<h3 class="text-uppercase text-info"> Náhodný tip </h3>
+			<a n:href="post id => $nPost->getWebId()">
+				<h4>{$nPost->getTitle()} <small>{$nPost->getDescription(200)}</small>
+				</h4>
+			</a>
+			{/foreach}
+			<hr>
 		</div>
 	</div>
 </div>

@@ -45,6 +45,10 @@ final class HomepagePresenter extends BaseFrontPresenter {
 		$this->template->news = $this->articleRepository->findPublishedArticles($limits);
 		$this->paginator->setItemCount($total);
 		$this->template->paginator = $this->paginator;
+		
+		$this->template->dPosts = $this->articleRepository->getMostDiscussedArticles();
+		$this->template->rPosts = $this->articleRepository->getMostReadedArticles();
+		$this->template->nPosts = $this->articleRepository->getRandArticles();
 	}
 	
 	/**
@@ -125,6 +129,11 @@ final class HomepagePresenter extends BaseFrontPresenter {
 		$this->template->bgImage = "home-bg.jpg";
 		$this->template->title = $this->objectWithArticles->getTitle();
 		$this->template->description = $this->objectWithArticles->getDescription(200);
+		//nastaveni zajimavych clanku sekce
+		$this->template->dPosts = $this->articleRepository->getMostDiscussedArticles(1, $this->objectWithArticles->getId());
+		$this->template->rPosts = $this->articleRepository->getMostReadedArticles(1, $this->objectWithArticles->getId());
+		$this->template->nPosts = $this->articleRepository->getRandArticles(1, $this->objectWithArticles->getId());
+		
 		//nastaveni strankovani
 		$this->paginator = new \Nette\Utils\Paginator;
 		$this->paginator->setItemsPerPage(self::POST_PER_PAGE);

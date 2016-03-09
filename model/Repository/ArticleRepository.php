@@ -137,9 +137,113 @@ class ArticleRepository extends Nette\Object {
 		if (empty($limits)) {
 			return $this->myArticleRepository->findAll();
 		}
-		return $this->myArticleRepository->findBy([], ['publishDate' => 'DESC'], $limits['limit'], $limits['offset']);
+		//vychozi razeni
+		if (!array_key_exists('order', $limits)) {
+			$limits['order'] = ['publishDate' => 'DESC']; 
+		}
+		if (!array_key_exists('criteria', $limits)) {
+			$limits['criteria'] = [];
+		}
+		return $this->myArticleRepository->findBy($limits['criteria'], $limits['order'], $limits['limit'], $limits['offset']);
 	}
 	
-
+	/**
+	 * Vraci nejdiskutovanejsi clanky
+	 * @param int $count
+	 * @param int|NULL $sectionId 
+	 * @param DateTime|NULL $period
+	 * @return Entities\Article[]
+	 */
+	public function getMostDiscussedArticles($count = 1, $sectionId = NULL, $period = NULL) {
+		if ($period === NULL) {
+			$now = new DateTime();
+			$period = $now->modify("-2 month");
+		}
+		$cacheId = 'discuss-' . $count;
+		$query = $this->em->createQueryBuilder();
+		//vyhledavaci podminka
+		$whereConditon = $query->expr()->andX();
+		$whereConditon->add($query->expr()->gt('a.publishDate', ':period'));
+		$whereConditon->add($query->expr()->eq('a.published', 'TRUE'));
+		if ($sectionId !== NULL) {
+			$whereConditon->add($query->expr()->eq('a.section', $sectionId));
+			$cacheId = '-' . $sectionId;
+		}
+		$result = $query
+					->select('COUNT(u) AS HIDDEN cComments', 'a')
+					->from('App\Model\Entities\Article', 'a')
+					->leftJoin('a.comments', 'u')
+					->where($whereConditon)
+					->orderBy('cComments', 'DESC')
+					->groupBy('a')
+					->setMaxResults($count)
+					->getQuery()
+					->useResultCache(TRUE, 600, $cacheId);
+		$result->setParameter('period', $period);
+		return $result->getResult();
+	}
+	
+	/**
+	 * Vraci nejctenejsi clanky
+	 * @param int $count
+	 * @param int|NULL $sectionId
+	 * @param DateTime|NULL $period
+	 * @return Entities\Article[]
+	 */
+	public function getMostReadedArticles($count = 1, $sectionId = NULL, $period = NULL) {
+		if ($period === NULL) {
+			$now = new DateTime();
+			$period = $now->modify("-2 month");
+		}
+		$cacheId = 'read-' . $count;
+		$query = $this->em->createQueryBuilder();
+		//vyhledavaci podminka
+		$whereConditon = $query->expr()->andX();
+		$whereConditon->add($query->expr()->gt('a.publishDate', ':period'));
+		$whereConditon->add($query->expr()->eq('a.published', 'TRUE'));
+		if ($sectionId !== NULL) {
+			$whereConditon->add($query->expr()->eq('a.section', $sectionId));
+			$cacheId = '-' . $sectionId;
+		}
+		$result = $query->select('a')
+			->from('App\Model\Entities\Article', 'a')
+			->where($whereConditon)
+			->orderBy('a.counter', 'DESC')
+			->setMaxResults($count)
+			->getQuery()
+			->useResultCache(TRUE, 600, $cacheId);
+		$result->setParameter('period', $period);
+		return $result->getResult();
+	}
+	
+	/**
+	 * Vraci nahodne clanky
+	 * @param int $count
+	 * @param int|NULL $sectionId
+	 * @param DateTime|NULL $period
+	 * @return Entities\Article[]
+	 */
+	public function getRandArticles($count = 1, $sectionId = NULL, $period = NULL) {
+		if ($period === NULL) {
+			$now = new DateTime();
+			$period = $now->modify("-6 month");
+		}
+		$cacheId = 'rand-' . $count;
+		$countAllArticles = (int) $this->countAllArticles();
+		$query = "SELECT a FROM \App\Model\Entities\Article a WHERE a.published = true "
+				. "AND a.publishDate >= :date ";
+		if ($sectionId !== NULL) {
+			$query .= "AND a.section = $sectionId ";
+			$cacheId .= '-' . $sectionId;
+		}
+		$randArticles = $this->em->createQuery($query)
+				->setParameter('date', $period)
+				->setMaxResults($count)
+				->setFirstResult(mt_rand(0, $countAllArticles - 1))
+				->useResultCache(TRUE, 600, $cacheId)
+				->getResult();
+		
+		return $randArticles;
+	}
 
 }
