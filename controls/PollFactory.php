@@ -55,17 +55,17 @@ class PollFactory extends UI\Control {
 		if (in_array($typeVote->getFormType(), ['radio', 'checkbox'])) {
 			$list = $this->getOptionList($this->vote->getOptions());
 			if ($typeVote->getFormType() == 'radio') {
-				$form->addRadioList($typeVoteId, 'options', $list);
+				$form->addRadioList($typeVoteId, NULL, $list);
 			} elseif ($typeVote->getFormType() == 'checkbox') {
-				$form->addCheckboxList($typeVoteId, 'options', $list);
+				$form->addCheckboxList($typeVoteId, NULL, $list);
 			}
 			if ($typeVote->hasOpenOption()) {
-				$form->addText('text', 'text');
+				$form->addText('text', NULL);
 			}
 		} elseif ($typeVote->getFormType() == 'text') {
-			$form->addText($typeVoteId, 'options');
+			$form->addText('text', NULL);
 		} elseif ($typeVote->getFormType() == 'textarea') {
-			$form->addTextArea($typeVoteId, 'options');
+			$form->addTextArea('text', NULL);
 		}
 		$form->addSubmit('send', 'system.save');
 		$form->addHidden('id', $this->vote->getId());
@@ -122,9 +122,14 @@ class PollFactory extends UI\Control {
 	 */
 	protected function processPoll($vote, $requestInfo, $values) {
 		$voter_id = \App\Model\Entities\Poll::generateVoteIdentificator();
-		foreach ($values as $id => $value) {
-			if (!is_numeric($id) || ($value === FALSE)) continue;
-			$myOption = $this->em->getReference(\App\Model\Entities\Option::class, $id);
+		$answers = $this->parsePoll($values);
+		
+		foreach ($answers as $key => $value) {
+			if ($key == 'text') {
+				//neco udelat
+				continue;
+			}
+			$myOption = $this->em->getReference(\App\Model\Entities\Option::class, $key);
 			$myNewPoll = new \App\Model\Entities\Poll($myOption, $value);
 			$myNewPoll->setVoterIdentification($voter_id);
 			$myNewPoll->setIp($requestInfo['ip']);
@@ -138,6 +143,31 @@ class PollFactory extends UI\Control {
 		} catch (\Exception $e) {
 			\Tracy\Debugger::log($e, \Tracy\Debugger::INFO);
 			$result = FALSE;
+		}
+		return $result;
+	}
+	
+	/**
+	 * 
+	 * @param \Nette\Utils\ArrayHash $pollValues
+	 * @return array
+	 */
+	protected function parsePoll($pollValues) {
+		$result = [];
+		foreach ($pollValues as $key => $value) {
+			if ($key == 'id') {
+				continue;
+			}
+			if ($key == 'text' && !empty($value)) {
+				$result[$key] = $value;
+			}
+			if (is_numeric($value)) {
+				$result[$value] = TRUE;
+			} elseif (is_array($value)) {
+				foreach ($value as $id) {
+					$result[$id] = TRUE;
+				}
+			} 
 		}
 		return $result;
 	}
@@ -160,6 +190,11 @@ class PollFactory extends UI\Control {
 	 * @return boolean 
 	 */
 	protected function isVotingAllowed() {
+		//nevyprsela expirace?
+		$today = new \Nette\Utils\DateTime();
+		if ($this->vote->getExpire() !== NULL && ($this->vote->getExpire() < $today)) {
+			return FALSE;
+		}
 		$requestInfo = $this->getRequestInfo($this->request);
 		//existuje hlasovani s danymi parametry?
 		$r = $this->vote->getPolls()->exists(function($key, $entity) use ($requestInfo) {

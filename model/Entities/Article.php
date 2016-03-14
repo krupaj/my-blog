@@ -101,7 +101,7 @@ class Article {
 	private $comments;
 	
 	/**
-	 * @ORM\ManyToMany(targetEntity="App\Model\Entities\Vote", inversedBy="articles", cascade={"persist"})
+	 * @ORM\ManyToMany(targetEntity="App\Model\Entities\Vote", mappedBy="articles", cascade={"persist"})
 	 * @ORM\JoinTable(name="article_vote",
      *      joinColumns={@ORM\JoinColumn(name="article_id", referencedColumnName="article_id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="vote_id", referencedColumnName="vote_id")}

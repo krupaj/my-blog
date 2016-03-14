@@ -167,6 +167,10 @@ final class HomepagePresenter extends BaseFrontPresenter {
 		$this->template->bgImage = "home-bg.jpg";
 		$this->template->title = $this->objectWithArticles->getTitle();
 		$this->template->description = $this->translator->translate('system.tag', 1);
+		//nastaveni zajimavych clanku sekce
+		$this->template->dPosts = $this->articleRepository->getMostDiscussedArticles();
+		$this->template->rPosts = $this->articleRepository->getMostReadedArticles();
+		$this->template->nPosts = $this->articleRepository->getRandArticles();
 		//nastaveni strankovani
 		$this->paginator = new \Nette\Utils\Paginator;
 		$this->paginator->setItemsPerPage(self::POST_PER_PAGE);

@@ -4,7 +4,7 @@
  *}
 
 {block content}
-<section>
+<article class="well">
 	<h1>{$vote->getQuestion()}</h1>
 	{if $pollForm !== NULL}
 		<p class="help-block">
@@ -12,15 +12,17 @@
 		</p>
 		{control $pollForm}
 	{else}
-		Vysledky
+		{*Výsledky*}
 		{var $result = $vote->getPollResult()}
 		{foreach $result['options'] as $option}
+			{$option['option']}
 			<div class="progress">
 				<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="{$option['per']}" aria-valuemin="0" aria-valuemax="100" style="width: {$option['per']}%;">
-					<span class="pull-left">{$option['option']}</span><span class="pull-right">{$option['per']} % </span>
+					{$option['per']} %
 				</div>
+				{*<span class="pull-right">{$option['per']} % </span><span class="pull-left">{$option['option']}</span> *}
 			</div>
 		{/foreach}
 	{/if}
-</section>
+</article>
 {/block}

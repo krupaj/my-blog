@@ -29,8 +29,18 @@ final class VotesPresenter extends BaseAdminPresenter {
 		$this->template->title = $this->translator->translate('system.vote', 2);
 	}
 	
+	/**
+	 * @param int $voteId
+	 */
 	public function handleEditVote($voteId) {
 		$this->redirect('Votes:edit', ['voteId' => $voteId]);
+	}
+	
+	/**
+	 * @param int $voteId
+	 */
+	public function handlePostVote($voteId) { 
+		$this->redirect('Votes:articles', ['voteId' => $voteId]);
 	}
 	
 	/**
@@ -88,11 +98,13 @@ final class VotesPresenter extends BaseAdminPresenter {
 		foreach ($votes as $vote) {
 			$editLink = $this->link('editVote!', ['voteId' => $vote->getId()]);
 			$deleteLink = $this->link('deleteVote!', ['voteId' => $vote->getId()]);
+			$postLink = $this->link('postVote!', ['voteId' => $vote->getId()]);
 			
 			$myVote = [];
 			$myVote['DT_RowAttr'] = [
 				'data-editLink' => $editLink,
 				'data-deleteLink' => $deleteLink,
+				'data-postLink' => $postLink
 			];
 			$myVote[] = $vote->getQuestion(100);
 			$myVote[] = $vote->getTypeVote()->getName();
@@ -197,10 +209,11 @@ final class VotesPresenter extends BaseAdminPresenter {
 			'limit' => $limit,
 			'offset' => $offset
 		];
-		$total = $this->articleRepository->countAllArticles();
+		$currentArticles = $this->myVote->getArticles();
+		$currentArticleIds = $this->getArticlesId($currentArticles);
+		$total = $this->articleRepository->countAllArticles() - $currentArticles->count();
 		$myArticles = $this->articleRepository->findAllArticles($limits);
-		
-		$articles = $this->parseArticles($myArticles);
+		$articles = $this->parseArticles($myArticles, $currentArticleIds);
 		
 		$answer = [
 			'draw' => $draw,
@@ -216,9 +229,12 @@ final class VotesPresenter extends BaseAdminPresenter {
 	 * @param Model\Entities\Article[] $articles
 	 * @return array
 	 */
-	protected function parseArticles($articles) {
+	protected function parseArticles($articles, $excludedArticles = []) {
 		$result = [];
 		foreach ($articles as $article) {
+			if (in_array($article->getId(), $excludedArticles)) {
+				continue;
+			}
 			$addLink = $this->link('addArticleVote!', ['articleId' => $article->getId()]);
 			$deleteLink = $this->link('deleteArticleVote!', ['articleId' => $article->getId()]);
 			
@@ -228,27 +244,49 @@ final class VotesPresenter extends BaseAdminPresenter {
 				'data-deleteLink' => $deleteLink,
 			];
 			$myArticle[] = $article->getTitle();
-			$myArticle[] = $article->getPublishDate();
+			$myArticle[] = $article->getDescription(100);
+			$myArticle[] = $article->getPublishDate()->format('d. m. Y, H:i');
 			$myArticle[] = ''; //potreba kvuli tlacitkum
 			$result[] = $myArticle;
 		}
 		return $result;
 	}
 	
+	/**
+	 * Vraci pole article_id
+	 * @param Model\Entities\Article[] $articles
+	 * @return int[]
+	 */
+	protected function getArticlesId($articles) {
+		$result = [];
+		foreach ($articles as $article) {
+			$result[] = $article->getId();
+		}
+		return $result;
+	}
+	
+	/**
+	 * @param int $articleId
+	 * @return void Pridava propojeni clanku a ankety
+	 */
 	public function handleAddArticleVote($articleId) {
 		$em = $this->articleRepository->getEntityManager();
 		$addArticle = $em->getReference(Model\Entities\Article::class, $articleId);
-		
 		$this->myVote->addArticle($addArticle);
+		$em->flush();
 		$this->flashMessage($this->translator->translate('system.requestS'), self::MESSAGE_SUCCESS);
 		$this->redirect('this');
 	}
 	
+	/**
+	 * @param int $articleId
+	 * @return void Odstranuje propojeni clanku a ankety
+	 */
 	public function handleDeleteArticleVote($articleId) {
 		$em = $this->articleRepository->getEntityManager();
 		$rArticle = $em->getReference(Model\Entities\Article::class, $articleId);
-		
 		$this->myVote->removeArticle($rArticle);
+		$em->flush();
 		$this->redirect('this');
 		
 	}

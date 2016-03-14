@@ -2,28 +2,30 @@
 
 {block content}
 <div class="row">
-	<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+	<div class="col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1">
 		<h2 n:block=title>{_system.post, 2}</h2>
 		<h3> Prirazene </h3>
 			<table class="table dataTable">
 				<thead>
 					<tr>
 						<th>Nazev</th>
+						<th>Popisek</th>
 						<th>Datum</th>
 						<th> </th>
 					</tr>
+					
+				</thead>
+				<tbody>
 					<tr n:foreach="$articles as $article">
 						<td>{$article->getTitle()}</td>
-						<td>{$artilce->getPublishDate()}</td>
+						<td>{$article->getDescription(100)}</td>
+						<td>{$article->getPublishDate()|date:'d. m. Y, H:i'}</td>
 						<td>
 							<a n:href="deleteArticleVote! articleId => $article->getId()" class="btn btn-default pull-right">
-								<i class="glyphicon glyphicon-minus">
+								<i class="glyphicon glyphicon-minus"></i>
 							</a>
 						</td>
 					</tr>
-				</thead>
-				<tbody>
-					{*Naplni se pres datatables*}
 				</tbody>
 			</table>
 		<h3>Neprirazene</h3>
@@ -32,6 +34,7 @@
 			<thead>
 				<tr>
 					<th>Nazev</th>
+					<th>Popisek</th>
 					<th>Datum</th>
 					<th> </th>
 				</tr>

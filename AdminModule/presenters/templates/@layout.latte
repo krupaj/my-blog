@@ -108,7 +108,7 @@
 	<!-- Main Content -->
     <div class="container">
 		{foreach $flashes as $flash} 
-			<p class="bg-{$flash->type}">{$flash->message}</p>
+			<p class="alert bg-{$flash->type}">{$flash->message}</p>
 		{/foreach}
 		
 		{include content}

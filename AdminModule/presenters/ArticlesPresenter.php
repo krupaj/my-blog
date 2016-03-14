@@ -52,6 +52,7 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 	}
 	
 	/**
+	 * @todo Upravit neni formcontainer
 	 * @param int $articleId
 	 * @return void Propojeni clanku a ankety
 	 */
@@ -104,24 +105,6 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 		
 		$form->onSuccess[] = function ($form) {
 			$form->getPresenter()->redirect('this');
-		};
-		return $form;
-	}
-	
-	/**
-	 * @return VoteFormFactory Anketa ke clanku
-	 */
-	public function createComponentVoteArticle() {
-		$articleId = isset($this->myArticle) ? $this->myArticle->getId() : NULL;
-		$form = $this->voteArticleForm->create($articleId, []);
-		$form->onValidate[] = function ($form) {
-			if ($form->hasErrors()) {
-				$this->template->component = 'voteArticle';
-				$this->redrawControl('formContainer');
-			}
-		};
-		$form->onSuccess[] = function ($form) {
-			$form->getPresenter()->redirect('default');
 		};
 		return $form;
 	}

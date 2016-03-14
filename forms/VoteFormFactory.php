@@ -64,9 +64,13 @@ class VoteFormFactory extends Nette\Object {
 		
 		if ($vote) {
 			$defaults = $this->getDefaults($vote);
-			//\Tracy\Debugger::log($defaults['options']);
 			$form->setDefaults($defaults);
-				$options->setValues($defaults['options']);
+			$options->setValues($defaults['options']);
+		} else {
+			$today = new DateTime();
+			$today->modify('+6 month');
+			$default = [ 'expiration' => $today->format(self::$dateMask) ];
+			$form->setDefaults($default);
 		}
 		
 		

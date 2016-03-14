@@ -67,7 +67,7 @@ class Vote {
 	protected $polls;
 	
 	/**
-	 * @ORM\ManyToMany(targetEntity="App\Model\Entities\Article", mappedBy="votes")
+	 * @ORM\ManyToMany(targetEntity="App\Model\Entities\Article", inversedBy="votes", cascade={"persist"})
 	 * @ORM\JoinTable(name="article_vote",
      *      joinColumns={@ORM\JoinColumn(name="vote_id", referencedColumnName="vote_id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="article_id", referencedColumnName="article_id", unique=true)}
@@ -234,9 +234,11 @@ class Vote {
 			$optionId = $poll->getOption()->getId();
 			$result['options'][$optionId]['total']++;
 		}
-		$perTotal = 100 / $result['total'];
+		
+		$perTotal = ($result['total'] == 0) ? 0 : (100 / $result['total']);
 		foreach ($result['options'] as $optionId => $option) {
-			$result['options'][$optionId]['per'] = ($perTotal * $option['total'] );
+			$result['options'][$optionId]['per'] = ( $perTotal * $option['total'] );
+			
 		}
 		return $result;
 	}
