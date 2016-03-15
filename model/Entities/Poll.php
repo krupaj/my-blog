@@ -28,8 +28,8 @@ class Poll {
 	
 	/**
 	 * @ORM\ManyToOne(targetEntity="App\Model\Entities\Option")
-	 * @ORM\JoinColumn(name="option_id", referencedColumnName="option_id")
-	 * @var Option
+	 * @ORM\JoinColumn(name="option_id", referencedColumnName="option_id", nullable=false)
+	 * @var Option|NULL
 	 */
 	protected $option;
 	
@@ -72,10 +72,10 @@ class Poll {
 	protected $cookie;
 
 	/**
-	 * @param Option $option Volba pro kterou se hlasuje
+	 * @param Option|NULL $option Volba pro kterou se hlasuje, neni-li to text
 	 * @param string $value Hodnota hlasovani
 	 */
-	public function __construct(Option $option, $value) {
+	public function __construct($option, $value) {
 		$this->option = $option;
 		$this->value = $value;
 		$this->time = new DateTime();

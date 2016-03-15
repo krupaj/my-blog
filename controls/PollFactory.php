@@ -125,11 +125,12 @@ class PollFactory extends UI\Control {
 		$answers = $this->parsePoll($values);
 		
 		foreach ($answers as $key => $value) {
-			if ($key == 'text') {
-				//neco udelat
-				continue;
+			if ($key != 'text') {
+				$myOption = $this->em->getReference(\App\Model\Entities\Option::class, $key);
+			} else {
+				$myOption = NULL;
 			}
-			$myOption = $this->em->getReference(\App\Model\Entities\Option::class, $key);
+			
 			$myNewPoll = new \App\Model\Entities\Poll($myOption, $value);
 			$myNewPoll->setVoterIdentification($voter_id);
 			$myNewPoll->setIp($requestInfo['ip']);

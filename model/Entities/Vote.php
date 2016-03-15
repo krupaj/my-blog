@@ -220,6 +220,9 @@ class Vote {
 		$options = $this->getOptions();
 		$result = [ 'total' => 0 ];
 		foreach ($options as $option) {
+			if ($option === NULL) {
+				continue;
+			}
 			$result['options'][$option->getId()] = [
 				'option' => $option->getValue(),
 				'total' => 0
@@ -227,6 +230,9 @@ class Vote {
 		}
 		$lastVoterId = NULL;
 		foreach ($this->getPolls() as $poll) {
+			if ($poll->getOption() === NULL) {
+				continue;
+			}
 			if ($lastVoterId != $poll->getVoteIdentification()) {
 				$lastVoterId = $poll->getVoteIdentification();
 				$result['total']++;
