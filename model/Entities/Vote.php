@@ -216,9 +216,9 @@ class Vote {
 		}
 	}
 	
-	public function getPollResult() {
+	public function getPollResult($text = FALSE) {
 		$options = $this->getOptions();
-		$result = [ 'total' => 0 ];
+		$result = [ 'total' => 0, 'text' => [] ];
 		foreach ($options as $option) {
 			if ($option === NULL) {
 				continue;
@@ -230,7 +230,9 @@ class Vote {
 		}
 		$lastVoterId = NULL;
 		foreach ($this->getPolls() as $poll) {
-			if ($poll->getOption() === NULL) {
+			//priradit textove odpovedi zvlast
+			if ($poll->getOption() === NULL && $text) {
+				$result['text'][] = $poll->value;
 				continue;
 			}
 			if ($lastVoterId != $poll->getVoteIdentification()) {
@@ -278,6 +280,19 @@ class Vote {
 		if ($this->getArticles()->contains($article)) {
 			$this->articles->removeElement($article);
 		}
+	}
+	
+	/**
+	 * Je anketa jeste aktivni?
+	 * @return boolean
+	 */
+	public function isActive() {
+		$today = new DateTime();
+		$expiration = $this->getExpire();
+		if ($expiration === NULL) {
+			return TRUE;
+		}
+		return $today < $expiration;
 	}
 }
 

@@ -70,9 +70,9 @@ $(document).ready(function() {
 		var articleLink = $(this).parents('tr').attr('data-postLink');
 		doRequest(articleLink);
 	});
-	$('#votes tbody').on('click', '.data-opt-vote', function(event) {
+	$('#votes tbody').on('click', '.data-opt-result', function(event) {
 		event.preventDefault();
-		var editLink = $(this).parents('tr').attr('data-voteLink');
+		var editLink = $(this).parents('tr').attr('data-resultLink');
 		doRequest(editLink);
 	});
 	

@@ -192,8 +192,7 @@ class PollFactory extends UI\Control {
 	 */
 	protected function isVotingAllowed() {
 		//nevyprsela expirace?
-		$today = new \Nette\Utils\DateTime();
-		if ($this->vote->getExpire() !== NULL && ($this->vote->getExpire() < $today)) {
+		if (!$this->vote->isActive()) {
 			return FALSE;
 		}
 		$requestInfo = $this->getRequestInfo($this->request);

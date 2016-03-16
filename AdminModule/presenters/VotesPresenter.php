@@ -45,6 +45,13 @@ final class VotesPresenter extends BaseAdminPresenter {
 	
 	/**
 	 * @param int $voteId
+	 */
+	public function handleResultVote($voteId) {
+		$this->redirect('Votes:result', ['voteId' => $voteId]);
+	}
+	
+	/**
+	 * @param int $voteId
 	 * @return void Odstraneni ankety
 	 */
 	public function handleDeleteVote($voteId) {
@@ -99,12 +106,14 @@ final class VotesPresenter extends BaseAdminPresenter {
 			$editLink = $this->link('editVote!', ['voteId' => $vote->getId()]);
 			$deleteLink = $this->link('deleteVote!', ['voteId' => $vote->getId()]);
 			$postLink = $this->link('postVote!', ['voteId' => $vote->getId()]);
+			$resultLink = $this->link('resultVote!', ['voteId' => $vote->getId()]);
 			
 			$myVote = [];
 			$myVote['DT_RowAttr'] = [
 				'data-editLink' => $editLink,
 				'data-deleteLink' => $deleteLink,
-				'data-postLink' => $postLink
+				'data-postLink' => $postLink,
+				'data-resultLink' => $resultLink
 			];
 			$myVote[] = $vote->getQuestion(100);
 			$myVote[] = $vote->getTypeVote()->getName();
@@ -181,6 +190,24 @@ final class VotesPresenter extends BaseAdminPresenter {
 	
 	public function renderEdit() {
 		$this->template->title = $this->translator->translate('system.edit');
+	}
+	
+	/********** action & render RESULT **********/
+	
+	/**
+	 * @param int $voteId
+	 */
+	public function actionResult($voteId) {
+		$this->myVote = $this->voteRepository->getById($voteId);
+		if (!$this->myVote) {
+			$this->flashMessage($this->translator->translate('system.invalidId'), self::MESSAGE_DANGER);
+			$this->redirect('default');
+		}
+	}
+	
+	public function renderResult() {
+		$this->template->title = $this->translator->translate('system.voteResult');
+		$this->template->vote = $this->myVote;
 	}
 	
 	/********** action & render ARTICLES **********/

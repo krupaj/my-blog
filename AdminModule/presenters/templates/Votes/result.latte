@@ -1,0 +1,38 @@
+{* Výsledky ankety - admin module *}
+
+{block content}
+<div class="row">
+	<div class="col-lg-5 col-lg-offset-1 col-md-6 col-md-offset-1">
+		<h1>Souhrn</h1>
+		{var $result = $vote->getPollResult(true)}
+		<p>Stav: <span class="pull-right">{if $vote->isActive()} aktivní {else} neaktivní {/if}</span></p>
+		<p>Hlasujících celkem: <span class="pull-right">{$result['total']|number}</span></p>
+		{foreach $result['options'] as $option}
+			{$option['option']} <span class="pull-right">{$option['total']} </span>
+			<div class="progress">
+				<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="{$option['per']}" aria-valuemin="0" aria-valuemax="100" style="width: {$option['per']}%;">
+					{$option['per']} %
+				</div>
+			</div>
+		{/foreach}
+	</div>
+	<div class="col-lg-5 col-lg-offset-1 col-md-6 col-md-offset-1">
+		<h1>Textové odpovědi</h1>
+		<p>Hlasujících celkem: <span class="pull-right">{count($result['total'])|number}</span></p>
+		{foreach $result['text'] as $option}
+			<p>
+				{$option}
+			</p>
+		{/foreach}
+	</div>
+</div>
+
+
+{/block}
+
+
+
+{block scripts}
+{include parent}
+
+{/block}
