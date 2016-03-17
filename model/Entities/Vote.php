@@ -231,8 +231,10 @@ class Vote {
 		$lastVoterId = NULL;
 		foreach ($this->getPolls() as $poll) {
 			//priradit textove odpovedi zvlast
-			if ($poll->getOption() === NULL && $text) {
-				$result['text'][] = $poll->value;
+			if ($poll->getOption() === NULL) {
+				if ($text) {
+					$result['text'][] = $poll->value;
+				}
 				continue;
 			}
 			if ($lastVoterId != $poll->getVoteIdentification()) {
