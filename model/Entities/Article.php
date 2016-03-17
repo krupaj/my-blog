@@ -111,8 +111,9 @@ class Article {
 	private $votes;
 	
 	/**
-	 * @ORM\Column(type="string", nullable=true)
-	 * @var string Nazev obrazku
+	 * @ORM\OneToOne(targetEntity="App\Model\Entities\Image", cascade={"persist"})
+	 * @ORM\JoinColumn(name="image_id", referencedColumnName="image_id", nullable=true)
+	 * @var Image|NULL
 	 */
 	protected $image;
 
@@ -203,8 +204,8 @@ class Article {
 	}
 	
 	/**
-	 * @param string|NULL $image
-	 * @return boolean Probehlo ulozeni obrazku vcetne nahledu v poradku
+	 * @param Image|NULL $image
+	 * @return void
 	 */
 	public function setImage($image = NULL) {
 		$this->image = $image;
@@ -212,10 +213,14 @@ class Article {
 	
 	/**
 	 * @todo Neni jako polozka ve formech
-	 * @return string Nazev/cesta k hlavnimu obrazku clanku
+	 * @return Image Nazev/cesta k hlavnimu obrazku clanku
 	 */
 	public function getImage() {
-		return (is_null($this->image)) ? 'post-bg.jpg' : $this->image;
+		if ($this->image === NULL) {
+			$myDefaultImage = new Image('post-bg.jpg');
+			return $myDefaultImage;
+		}
+		return $this->image;
 	}
 	
 	/**
@@ -229,8 +234,7 @@ class Article {
 	 * @return string Nazev/cesta nahledu obrazu
 	 */
 	public function getImageThumbnail() {
-		$imageName = $this->getImage();
-		return 'pre_' . $imageName;
+		return $this->getImage()->getThumbnail();
 	}
 	
 	/**

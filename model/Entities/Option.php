@@ -2,9 +2,6 @@
 namespace App\Model\Entities;
 
 use Doctrine\ORM\Mapping AS ORM;
-use	Nette\Utils\DateTime;
-use Nette\Utils\Strings;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Class Option

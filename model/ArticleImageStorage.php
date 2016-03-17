@@ -11,7 +11,6 @@ class ArticleImageStorage extends Nette\Object {
 	/** @var string */
 	private $wwwDir;
 
-
 	/**
 	 * @param string $wwwDir
 	 */
@@ -19,13 +18,13 @@ class ArticleImageStorage extends Nette\Object {
 		$this->wwwDir = $wwwDir . '/images/articles/';
 	}
 	
-	
 	/**
 	 * @param Entities\Article $article
 	 * @param Nette\Utils\Image $image
+	 * @param string $source Zdroj obrazku (napr. Flick, atd.)
 	 * @return boolean
 	 */
-	public function setArticleImage($article, $image) {
+	public function setArticleImage($article, $image, $source = NULL) {
 		//odstranit puvodni obr vcetne nahledu
 		$this->deleteArticleImage($article);
 		//vytvorit nahled a ulozit novy obr
@@ -35,7 +34,11 @@ class ArticleImageStorage extends Nette\Object {
 		if (!$resImg) {
 			return FALSE;
 		}
-		$article->setImage($imageName);
+		if (empty($source)) {
+			$source = NULL;
+		}
+		$myImage = new Entities\Image($imageName, $source);
+		$article->setImage($myImage);
 		$resImg2 = $image->save($this->wwwDir . $thumbnail, 50);
 		
 		return ($resImg && $resImg2);
@@ -49,11 +52,12 @@ class ArticleImageStorage extends Nette\Object {
 		if (!$article->hasImage()) return;
 		
 		//odstranit puvodni obr vcetne nahledu
-		$oldImagePath = $this->wwwDir . $article->getImage();
+		$oldImage = $article->getImage();
+		$oldImagePath = $this->wwwDir . $oldImage->image;
 		if (file_exists($oldImagePath)) {
 			unlink($oldImagePath);
 		}
-		$oldImagePath = $this->wwwDir . $article->getImageThumbnail();
+		$oldImagePath = $this->wwwDir . $oldImage->getThumbnail();
 		if (file_exists($oldImagePath)) {
 			unlink($oldImagePath);
 		}

@@ -63,6 +63,8 @@ class ArticleFormFactory extends Nette\Object {
 				->addCondition(Form::FILLED)
 					->addRule(Form::IMAGE, $form->getTranslator()->translate('system.formImage', ['item' => '%label']));
 		
+		$form->addText('imageSource', 'system.postImageSource');
+		
 		$form->addTextArea('content', 'system.postContent')
 				->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']))
 				->setAttribute('rows', 10);
@@ -142,7 +144,7 @@ class ArticleFormFactory extends Nette\Object {
 			$section = $this->em->getReference(\App\Model\Entities\Section::class, $values->section);
 			$newArticle->setSection($section);
 			if ($values->image->isImage()) {
-				$this->imageStorage->setArticleImage($newArticle, $values->image->toImage());
+				$this->imageStorage->setArticleImage($newArticle, $values->image->toImage(), $values->imageSource);
 			}
 			$this->em->persist($newArticle);
 			$this->em->flush();
@@ -183,7 +185,12 @@ class ArticleFormFactory extends Nette\Object {
 			$editArticle->setSection($section);
 			
 			if ($values->image->isImage()) {
-				$this->imageStorage->setArticleImage($editArticle, $values->image->toImage());
+				$this->imageStorage->setArticleImage($editArticle, $values->image->toImage(), $values->imageSource);
+			} elseif (!empty ($values->imageSource)) {
+				$editImage = $editArticle->getImage();
+				if ($editImage !== NULL) {
+					$editImage->source = $values->imageSource;
+				}
 			}
 			//ulozeni zmeny
 			$this->em->flush();
