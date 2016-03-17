@@ -4,7 +4,7 @@ namespace App\Model\Entities;
 use Doctrine\ORM\Mapping AS ORM;
 
 /**
- * Class Option
+ * Class Image
  * @package App\Model\Entities
  * @author Jiri Krupnik <krupaj@seznam.cz>
  */

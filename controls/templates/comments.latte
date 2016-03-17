@@ -45,30 +45,41 @@
 				</p>
 			</div>
 		</div>
-		<ul class="comments-list">
+			
+		<ul class="comments-list" >
 			<h3> {_system.comments} </h3>
-			<li class="comment" n:foreach="$comments as $comment">
-				{continueIf $comment->isReply()}
-				<div class="comment-body">
-					<div class="comment-heading">
-						<h4 class="user"><i class="glyphicon glyphicon-user"></i> {$comment->getAuthorName()}</h4>
-						<h5 class="time">{$comment->getCreateDate()|ago}</h5>
-					</div>
-					{$comment->getContent()|noescape|texy}
-				</div>
-				<ul class="comments-list" n:if="$comment->hasReplies()">
-					<li class="comment" n:foreach="$comment->getReplies() as $reply">
-						<div class="comment-body">
-							<div class="comment-heading">
-								<h4 class="user"><i class="glyphicon glyphicon-user"></i> {$reply->getAuthorName()}</h4>
-								<h5 class="time">{$reply->getCreateDate()|ago}</h5>
-							</div>
-							{$reply->getContent()|noescape|texy}
+			<div n:snippet="comments" data-ajax-append="true">
+				<li class="comment" n:foreach="$comments as $comment">
+					{continueIf $comment->isReply()}
+					<div class="comment-body">
+						<div class="comment-heading">
+							<h4 class="user"><i class="glyphicon glyphicon-user"></i> {$comment->getAuthorName()}</h4>
+							<h5 class="time">{$comment->getCreateDate()|ago}</h5>
 						</div>
-					</li> 
-				</ul>
-			</li>
-		</ul>
+						{$comment->getContent()|noescape|texy}
+					</div>
+					<ul class="comments-list" n:if="$comment->hasReplies()">
+						<li class="comment" n:foreach="$comment->getReplies() as $reply">
+							<div class="comment-body">
+								<div class="comment-heading">
+									<h4 class="user"><i class="glyphicon glyphicon-user"></i> {$reply->getAuthorName()}</h4>
+									<h5 class="time">{$reply->getCreateDate()|ago}</h5>
+								</div>
+								{$reply->getContent()|noescape|texy}
+							</div>
+						</li> 
+					</ul>
+				</li>
+			</div>	
+		</ul>		
+		<!-- Pager -->
+		<div n:snippet="pagin">
+			<ul class="pager" n:if="!$paginator->last">
+				<li class="next">
+					<a n:href="setCommentPage! page => $paginator->page+1" class="ajax">{_system.commentNext} &rarr;</a> 
+				</li>
+			</ul>
+		</div>
 	</div>
 </div>
 								

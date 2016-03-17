@@ -7,6 +7,8 @@ use Nette\Application\UI\Form;
 
 
 class Comments extends UI\Control {
+	const COMMENT_PER_PAGE = 10;
+	
 	/** @var Article */
 	private $article;
 	/** @var \Nette\Http\SessionSection */
@@ -17,6 +19,8 @@ class Comments extends UI\Control {
 	private $articleRepository;
 	/** @var User Prihlaseneho uzivatele */
 	private $myUser;
+	/** @var \Nette\Utils\Paginator */
+	private $paginator;
 
 
 	public function __construct(Article $article, \Nette\Http\Session $session, \Kdyby\Translation\Translator $translator, \App\Model\Repository\ArticleRepository $repository) {
@@ -24,11 +28,22 @@ class Comments extends UI\Control {
 		$this->commentSession = $session->getSection('comments');
 		$this->translator = $translator;
 		$this->articleRepository = $repository;
+		
+		$this->paginator = new \Nette\Utils\Paginator;
+		$this->paginator->setItemsPerPage(self::COMMENT_PER_PAGE);
+		$this->paginator->setPage(1);
 	}
 	
 	public function render() {
-		$this->template->comments = $this->article->getComments();
+		
+		$comments = $this->article->getComments();
+		$this->template->comments = $comments->slice($this->paginator->getOffset(), $this->paginator->getLength());
 		$this->template->setFile(__DIR__ . '/templates/comments.latte');
+		
+		$total = count($this->article->getComments());
+		$this->paginator->setItemCount($total);
+		$this->template->paginator = $this->paginator;
+		
 		$this->template->render();
 	}
 
@@ -108,6 +123,22 @@ class Comments extends UI\Control {
 		$this->articleRepository->getEntityManager()->flush();
 		
 		$this->redirect('this');
+	}
+	
+	/**
+	 * 
+	 * @param int $page Nastavuje stranku paginatoru pro zobrazeni komentaru
+	 */
+	public function handleSetCommentPage($page=null) {
+		if ($page === NULL) {
+			$page = $this->paginator->getPage() + 1;
+		}
+		
+		if ($this->paginator->getPage() != $page) {
+			$this->paginator->setPage($page);
+			$this->redrawControl('comments');
+			$this->redrawControl('pagin');
+		}
 	}
 }
 
