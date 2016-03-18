@@ -49,12 +49,6 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">{_system.section, 2} <span class="caret"></span></a>
-						<ul class="dropdown-menu" n:inner-foreach="$sections as $section">
-							<li><a n:href="Homepage:section id => $section->getWebalizeTitle()">{$section->getTitle()}</a></li>
-						</ul>
-                    </li>
 					<li>
                         <a n:href="Tag:default">{_system.tag, 2}</a>
                     </li>
@@ -91,7 +85,6 @@
                         <span class="meta">
 							{_system.published} <abbr title="{$article->getPublishDate()|date:'%d.%m.%Y, %H:%M'}">{$article->getPublishDate()|ago}</abbr>
 							{if $article->isUpdated()} (<abbr title="{$article->getUpdateDate()|date:'%d.%m.%Y, %H:%M'}">{_system.updateOn}</abbr>) {/if}
-							{if $article->getSection()} {_system.inSection} <a n:href="section id=>$article->getSection()->getWebalizeTitle()">{$article->getSection()->getTitle()}</a> {/if}
 						</span>
                     </div>
                 </div>

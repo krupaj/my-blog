@@ -17,8 +17,6 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 	public $voteArticleForm;
 	/** @var \App\Model\Repository\ArticleRepository @inject */
 	public $articleRepository;
-	/** @var \App\Model\Repository\SectionRepository @inject */
-	public $sectionRepository;
 	/** @var \App\Model\Repository\TagRepository @inject */
 	public $tagRepository;
 	/** @var Model\ArticleImageStorage @inject */
@@ -92,9 +90,8 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 	 * @return ArticleFormFactory New/edit clanku
 	 */
 	public function createComponentManageArticle() {
-		$sections = $this->getSections();
 		$tags = $this->getTags();
-		$form = $this->articleForm->create($this->myArticle, $sections, $tags);
+		$form = $this->articleForm->create($this->myArticle, $tags);
 		
 		$form->onValidate[] = function ($form) {
 			if ($form->hasErrors()) {
@@ -155,29 +152,10 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 			];
 			$myArticle[] = $article->getPublishDate()->format('d. m. Y, H:i:s');
 			$myArticle[] = $article->getTitle();
-			if ($article->getSection() === NULL) {
-				$myArticle[] = FALSE;
-			} else {
-				$myArticle[] = $article->getSection()->getTitle();
-			}
 			$myArticle[] = $article->isPublished();
 			$myArticle[] = $article->getCounter();
 			$myArticle[] = ''; //potreba kvuli tlacitkum
 			$result[] = $myArticle;
-		}
-		return $result;
-	}
-	
-	/**
-	 * Vraci dostupne sekce
-	 * @return array
-	 */
-	protected function getSections() {
-		$result = [];
-		$sections = $this->sectionRepository->getAllSections();
-		foreach ($sections as $section) {
-			/** @var $section Model\Entities\Section */
-			$result[$section->getId()] = $section->getTitle();
 		}
 		return $result;
 	}
@@ -190,7 +168,7 @@ final class ArticlesPresenter extends BaseAdminPresenter {
 		$result = [];
 		$tags = $this->tagRepository->getAllTags();
 		foreach ($tags as $tag) {
-			/** @var $tag Model\Entities\Section */
+			/** @var $tag Model\Entities\Tag */
 			$result[$tag->getId()] = $tag->getTitle();
 		}
 		return $result;

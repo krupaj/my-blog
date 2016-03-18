@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 
 /**
- * Class Section (sekce, rubrika)
+ * Class TypeVote (typ anketni otazky)
  * @package App\Model\Entities
  * @author Jiri Krupnik <krupaj@seznam.cz>
  */

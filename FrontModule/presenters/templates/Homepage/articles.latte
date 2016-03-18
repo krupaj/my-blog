@@ -14,8 +14,8 @@
 						{$new->getDescription()}
 					</h3>
 				</a>
-				<p class="post-meta">{_system.published} <abbr title="{$new->getPublishDate()|date:'%d.%m.%Y'}">{$new->getPublishDate()|ago}</abbr>
-				{_system.inSection} <a n:href="section id=>$new->getSection()->getWebalizeTitle()">{$new->getSection()->getTitle()}</a>
+				<p class="post-meta">
+					{_system.published} <abbr title="{$new->getPublishDate()|date:'%d.%m.%Y'}">{$new->getPublishDate()|ago}</abbr>
 				</p>
 			</div>
 			{sep} <hr> {/sep}

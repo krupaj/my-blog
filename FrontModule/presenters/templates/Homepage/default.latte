@@ -16,10 +16,16 @@
 					{var $aImage = $new->getImage()}
 					<img src="{$basePath}/images/articles/{$aImage->getThumbnail()}" alt="{$aImage->getAlt()}" class="img-thumbnail img-responsive">
 				</a>
-				<p class="post-meta">{_system.published} <abbr title="{$new->getPublishDate()|date:'%d.%m.%Y'}">{$new->getPublishDate()|ago}</abbr>
-				{if $new->getSection()}
-					{_system.inSection} <a n:href="section id=>$new->getSection()->getWebalizeTitle()">{$new->getSection()->getTitle()}</a>
-				{/if}
+				<p class="post-meta">
+					<span class="pull-right">{_system.published} <abbr title="{$new->getPublishDate()|date:'%d.%m.%Y'}">{$new->getPublishDate()|ago}</abbr></span>
+					{if $new->hasTags()}
+						{foreach $new->getTags() as $tag}
+							<span class='label-default label tag-link'>
+								<i class="glyphicon glyphicon-tag"></i> 
+								<a n:href="Homepage:tag id => $tag->getWebId()">{$tag->getTitle()}</a>
+							</span>
+						{/foreach} 
+					{/if}
 				</p>
 			</div>
 			{sep} <hr> {/sep}

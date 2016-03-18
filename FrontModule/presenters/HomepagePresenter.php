@@ -8,8 +8,6 @@ final class HomepagePresenter extends BaseFrontPresenter {
 	
 	/** @var Model\Repository\ArticleRepository @inject */
 	public $articleRepository;
-	/** @var Model\Repository\SectionRepository @inject */
-	public $sectionRepository;
 	/** @var Model\Repository\TagRepository @inject */
 	public $tagRepository;
 	/** @var \App\BlogSettings @inject */
@@ -22,7 +20,7 @@ final class HomepagePresenter extends BaseFrontPresenter {
 	public $entityManager;
 	/** @var Model\Entities\Article */
 	protected $article;
-	/** @var Model\Entities\Section|Model\Entities\Tag */
+	/** @var Model\Entities\Tag */
 	protected $objectWithArticles;
 	/** @var \Nette\Utils\Paginator */
 	protected $paginator;
@@ -114,43 +112,6 @@ final class HomepagePresenter extends BaseFrontPresenter {
 		});
 	}
 	
-	/********** action & render SECTION **********/
-	
-	/**
-	 * @param string $id Web title rubriky
-	 */
-	public function actionSection($id) {
-		/** @var Model\Entities\Section $this->objectWithArticles */
-		$this->objectWithArticles = $this->sectionRepository->findSectionByTitle($id);
-		if (!is_object($this->objectWithArticles)) {
-			$this->flashMessage($this->translator->translate('system.sectionNF'), self::MESSAGE_DANGER);
-			$this->redirect('default');
-		}
-		$this->template->bgImage = "home-bg.jpg";
-		$this->template->title = $this->objectWithArticles->getTitle();
-		$this->template->description = $this->objectWithArticles->getDescription(200);
-		//nastaveni zajimavych clanku sekce
-		$this->template->dPosts = $this->articleRepository->getMostDiscussedArticles(1, $this->objectWithArticles->getId());
-		$this->template->rPosts = $this->articleRepository->getMostReadedArticles(1, $this->objectWithArticles->getId());
-		$this->template->nPosts = $this->articleRepository->getRandArticles(1, $this->objectWithArticles->getId());
-		
-		//nastaveni strankovani
-		$this->paginator = new \Nette\Utils\Paginator;
-		$this->paginator->setItemsPerPage(self::POST_PER_PAGE);
-		$this->paginator->setPage(1);
-		$this->setView('articles');
-	}
-	
-	public function renderArticles() {
-		/** @var Doctrine\Common\Collections\ArrayCollection */
-		$articles = $this->objectWithArticles->getArticles();
-		$total = $articles->count();
-		$this->template->news = $articles->slice($this->paginator->getOffset(), $this->paginator->getLength());
-		$this->paginator->setItemCount($total);
-		$this->template->paginator = $this->paginator;
-		
-	}
-	
 	/********** action & render TAG **********/
 	
 	/**
@@ -176,6 +137,16 @@ final class HomepagePresenter extends BaseFrontPresenter {
 		$this->paginator->setItemsPerPage(self::POST_PER_PAGE);
 		$this->paginator->setPage(1);
 		$this->setView('articles');
+	}
+	
+	public function renderArticles() {
+		/** @var Doctrine\Common\Collections\ArrayCollection */
+		$articles = $this->objectWithArticles->getArticles();
+		$total = $articles->count();
+		$this->template->news = $articles->slice($this->paginator->getOffset(), $this->paginator->getLength());
+		$this->paginator->setItemCount($total);
+		$this->template->paginator = $this->paginator;
+		
 	}
 	
 	/********** action & render TERMS **********/

@@ -1,11 +1,9 @@
 <?php
-
 namespace App;
 
 use Nette;
 use Nette\Application\Routers\RouteList;
 use Nette\Application\Routers\Route;
-
 
 class RouterFactory
 {
@@ -24,7 +22,6 @@ class RouterFactory
 			'id' => NULL
 		]);
 		//verejna cast FRONT modul
-		$router[] = new Route('section/<id>', 'Front:Homepage:section');
 		$router[] = new Route('post/<id>', 'Front:Homepage:post');
 		$router[] = new Route('tag/<id>', 'Front:Homepage:tag');
 		$router[] = new Route('terms', 'Front:Homepage:terms');

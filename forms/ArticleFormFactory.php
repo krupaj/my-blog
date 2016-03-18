@@ -35,7 +35,7 @@ class ArticleFormFactory extends Nette\Object {
 	 * @param \App\Model\Entities\Article|NULL $article Clanek k editaci
 	 * @return Form 
 	 */
-	public function create($article = NULL, $sections = [], $tags = []) {
+	public function create($article = NULL, $tags = []) {
 		$form = $this->baseFormFactory->create();
 		$form->addText('title', 'system.postName')
 			->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']));
@@ -51,10 +51,6 @@ class ArticleFormFactory extends Nette\Object {
 				->setType('datetime-local')
 				->setDefaultValue($today->format('d. m. Y, H:i'));
 				//->setAttribute('placeholder', 'd. m. Y, H:i (den. měsíc. rok');
-		
-		$form->addSelect('section', new Phrase('system.section',1))
-				->setItems($sections)
-				->setPrompt('Zvolte sekci');
 		
 		$form->addMultiSelect('tags', new Phrase('system.tag',2) )
 				->setItems($tags);
@@ -141,8 +137,6 @@ class ArticleFormFactory extends Nette\Object {
 				$tag = $this->em->getReference(\App\Model\Entities\Tag::class, $tagId);
 				$newArticle->addTag($tag);	
 			}
-			$section = $this->em->getReference(\App\Model\Entities\Section::class, $values->section);
-			$newArticle->setSection($section);
 			if ($values->image->isImage()) {
 				$this->imageStorage->setArticleImage($newArticle, $values->image->toImage(), $values->imageSource);
 			}
@@ -181,9 +175,6 @@ class ArticleFormFactory extends Nette\Object {
 			}
 			$editArticle->setTags($tags);
 			
-			$section = $this->em->getReference(\App\Model\Entities\Section::class, $values->section);
-			$editArticle->setSection($section);
-			
 			if ($values->image->isImage()) {
 				$this->imageStorage->setArticleImage($editArticle, $values->image->toImage(), $values->imageSource);
 			} elseif (!empty ($values->imageSource)) {
@@ -216,9 +207,6 @@ class ArticleFormFactory extends Nette\Object {
 			$result['publishDate'] = $publishDate->format('d. m. Y, H:i');
 		}
 		$result['content'] = $article->getContent();
-		if ($article->getSection() !== NULL) {
-			$result['section'] = $article->getSection()->getId();
-		}
 		
 		foreach ($article->getTags() as $tag) {
 			$result['tags'][] = $tag->getId();

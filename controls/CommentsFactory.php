@@ -5,7 +5,9 @@ use \App\Model\Entities\Article;
 use Nette\Application\UI;
 use Nette\Application\UI\Form;
 
-
+/**
+ * Control pro pridani a vypsani komentaru ke clankum
+ */
 class Comments extends UI\Control {
 	const COMMENT_PER_PAGE = 10;
 	
@@ -22,7 +24,12 @@ class Comments extends UI\Control {
 	/** @var \Nette\Utils\Paginator */
 	private $paginator;
 
-
+	/**
+	 * @param Article $article Clanek, ktery se komentuje
+	 * @param \Nette\Http\Session $session Session pro ulozeni hodnot pri nahledu komentare
+	 * @param \Kdyby\Translation\Translator $translator Prekladac
+	 * @param \App\Model\Repository\ArticleRepository $repository 
+	 */
 	public function __construct(Article $article, \Nette\Http\Session $session, \Kdyby\Translation\Translator $translator, \App\Model\Repository\ArticleRepository $repository) {
 		$this->article = $article;
 		$this->commentSession = $session->getSection('comments');
@@ -126,10 +133,10 @@ class Comments extends UI\Control {
 	}
 	
 	/**
-	 * 
-	 * @param int $page Nastavuje stranku paginatoru pro zobrazeni komentaru
+	 * Nastavuje stranku paginatoru pro zobrazeni komentaru
+	 * @param int $page 
 	 */
-	public function handleSetCommentPage($page=null) {
+	public function handleSetCommentPage($page = NULL) {
 		if ($page === NULL) {
 			$page = $this->paginator->getPage() + 1;
 		}

@@ -68,13 +68,6 @@ class Article {
 	 * @var int Poce zobrazeni clanku 
 	 */
 	protected $counter = 1;
-	
-	/**
-	 * @ORM\ManyToOne(targetEntity="App\Model\Entities\Section", inversedBy="articles")
-	 * @ORM\JoinColumn(name="section_id", referencedColumnName="section_id")
-	 * @var Section 
-	 */
-	protected $section;
 
 	/**
 	 * @ORM\Column(type="text", nullable=false)
@@ -345,20 +338,6 @@ class Article {
 	}
 	
 	/**
-	 * @return Section
-	 */
-	public function getSection() {
-		return $this->section;
-	}
-	
-	/**
-	 * @param Section $section
-	 */
-	public function setSection(Section $section) {
-		$this->section = $section;
-	}
-	
-	/**
 	 * Vraci vsechny komentare clanku
 	 * @return ArrayCollection Comment[]
 	 */
@@ -461,4 +440,3 @@ class Article {
 		return $this->votes;
 	}
 }
-

@@ -53,14 +53,12 @@ services:
 	# Repository services
 	- App\Model\Repository\UserRepository
 	- App\Model\Repository\ArticleRepository
-	- App\Model\Repository\SectionRepository
 	- App\Model\Repository\TagRepository
 	- App\Model\Repository\VoteRepository
 	# Forms
 	- App\Forms\BaseFormFactory
 	- App\Forms\SignFormFactory
 	- App\Forms\ArticleFormFactory
-	- App\Forms\SectionFormFactory
 	- App\Forms\TagFormFactory
 	- App\Forms\VoteFormFactory
 	- App\Forms\UserFormFactory

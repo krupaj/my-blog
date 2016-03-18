@@ -6,7 +6,7 @@ use App\Model\Entities;
 
 
 /**
- * Section management (rubrika, sekce).
+ * Tag management (stitek, sekce, nalepka).
  */
 class TagRepository extends Nette\Object {
 
