@@ -2,7 +2,22 @@
 
 {block content}
 <div class="row">
-	<div class="col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1">
+	<div class="col-lg-3 col-lg-offset-1 col-md-3 col-md-offset-1" n:ifset="$person">
+		<table>
+			<tr n:ifset="$person->avatar">
+				<td>
+					<img src="{$basePath}/images/users/{$person->avatar->thumbnail}" class="img-thumbnail center-block">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					{var $uData = $user->identity->getData();}
+					{$person->getFullname()} ({$uData['login']})
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div class="col-lg-7 col-md-7">
 		{control manageUser}
 	</div>
 </div>

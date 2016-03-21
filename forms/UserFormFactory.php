@@ -9,21 +9,26 @@ use App\Model\Entities\User;
 use Kdyby\Translation\Phrase;
 
 class UserFormFactory extends Nette\Object {
+	
 	/** @var \App\Model\Repository\UserRepository */
 	private $repository;
 	/** @var \Kdyby\Doctrine\EntityManager */
 	private $em;
 	/** @var BaseFormFactory */
 	private $baseFormFactory;
+	/** @var \App\Model\ArticleImageStorage Manipulace s obrazky */
+	private $imageStorage;
 	
 	/**
 	 * @param UserRepository $repository
 	 * @param BaseFormFactory $baseFormFactory Tovarna se zakladni formularem
+	 * @param \App\Model\ArticleImageStorage $imageStorage
 	 */
-	public function __construct(UserRepository $repository, BaseFormFactory $baseFormFactory) {
+	public function __construct(UserRepository $repository, BaseFormFactory $baseFormFactory, \App\Model\ArticleImageStorage $imageStorage) {
 		$this->repository = $repository;
 		$this->em = $repository->getEntityManager();
 		$this->baseFormFactory = $baseFormFactory;
+		$this->imageStorage = $imageStorage;
 	}
 
 	/**
@@ -32,18 +37,33 @@ class UserFormFactory extends Nette\Object {
 	 */
 	public function create($user = NULL) {
 		$form = $this->baseFormFactory->create();
-		$form->addText('login', 'system.credentialsName')
+		/* UZIVATELSKA CAST */
+		$userF = $form->addContainer('user');
+		$userF->addText('login', 'system.credentialsName')
 			->setRequired($form->getTranslator()->translate('system.requiredItem', ['label' => '%label']));
 
-		$form->addPassword('password', 'system.credentialsPassword');
-		$form->addPassword('password2', 'system.credentialsPassword')
-			->addConditionOn($form['password'], Form::FILLED)
-				->setRequired(new Phrase('system.requiredItem', ['label' => '%label']))
-				->addRule(Form::EQUAL, new Phrase('system.equalItem', ['label' => '%label']), $form['password']);
+		$userF->addPassword('password', 'system.credentialsPassword');
 		
-		$form->addSelect('role', 'system.userRole')
+		$userF->addPassword('password2', 'system.credentialsPassword')
+			->addConditionOn($form['user']['password'], Form::FILLED)
+				->setRequired(new Phrase('system.requiredItem', ['label' => '%label']))
+				->addRule(Form::EQUAL, new Phrase('system.equalItem', ['label' => '%label']), $form['user']['password']);
+
+		$userF->addSelect('role', 'system.userRole')
 			->setItems(User::getRoleList());
 		
+		/* OSOBNI CAST */
+		$personF = $form->addContainer('person');
+		$personF->addText('name', 'system.userName')
+			->setRequired(new Phrase('system.requiredItem', ['label' => '%label']));
+		
+		$personF->addText('surname', 'system.userSurname');
+		
+		$personF->addUpload('avatar', 'system.userAvatar')
+			->addCondition(Form::FILLED)
+				->addRule(Form::IMAGE, $form->getTranslator()->translate('system.formImage', ['item' => '%label']));
+		
+		/* OBECNA CAST */
 		$form->addSubmit('send', 'system.save');
 		
 		//id, vychozi hodnoty pri editaci
@@ -63,12 +83,26 @@ class UserFormFactory extends Nette\Object {
 	 */
 	public function validateForm(Form $form) {
 		$values = $form->getValues();
-		
+		$userValues = $values->user;
+		$personValues = $values->person;
 		//zmena hesla
-		if (!empty($values->password)) {
-			if ($values->password != $values->password2) {
-				$form->addError($form->getTranslator()->translate('system.equalItem', ['label' => $form['password']->getLabel()->getText()]));
+		if (!empty($userValues->password)) {
+			if ($userValues->password != $userValues->password2) {
+				$form->addError($form->getTranslator()->translate('system.equalItem', ['label' => $form['user']['password']->getLabel()->getText()]));
 			}
+		}
+		
+		if (empty($personValues->name)) {
+			$form->addError($form->getTranslator()->translate('system.requiredItem', ['label' => $form['person']['name']->getLabel()->getText()]));
+		}
+		
+		$image = NULL;
+		if ($personValues->avatar->isImage()) {
+			$image = $personValues->avatar;
+		}
+		if (!empty($image) && (!$image->isOk() || !$image->isImage())) {
+			$item = $form->getTranslator()->translate('system.userAvatar');
+			$form->addError($form->getTranslator()->translate('system.formImage', ['item' => $item]));
 		}
 		
 	}
@@ -79,6 +113,11 @@ class UserFormFactory extends Nette\Object {
 	 * @param Nette\Utils\ArrayHash $values
 	 */
 	public function formSucceeded(Form $form, $values) {
+		//nastaveni hodnot
+		if (empty($values->person->surname)) {
+			$values->person->surname = NULL;
+		}
+		
 		//novy uzivatel nebo jeho editace
 		$result = empty($values->id) ? $this->newUser($values) : $this->editUser($values);
 		if ($result) {
@@ -94,10 +133,17 @@ class UserFormFactory extends Nette\Object {
 	 */
 	protected function newUser($values) {
 		$result = TRUE;
+		$userValues = $values->user;
+		$personValues = $values->person;
 		try {
-			//pridani noveho uzivatele a ulozeni zmen
-			$newUser = new User($values->login, $values->password, $values->role);
-			
+			// pridani noveho uzivatele a ulozeni zmen
+			$newUser = new User($userValues->login, $userValues->password, $userValues->role);
+			$newPerson = new \App\Model\Entities\Person($personValues->name, $personValues->surname);
+			if ($personValues->avatar->isImage()) {
+				$this->imageStorage->setPersonAvatar($newPerson, $personValues->avatar->toImage());
+			}
+			$newUser->setPerson($newPerson);
+			// ulozeni zmen
 			$this->em->persist($newUser);
 			$this->em->flush();
 		} catch (\Exception $e) {
@@ -113,6 +159,8 @@ class UserFormFactory extends Nette\Object {
 	 */
 	protected function editUser($values) {
 		$result = TRUE;
+		$userValues = $values->user;
+		$personValues = $values->person;
 		try {
 			/** @var User $editUser */
 			$editUser = $this->repository->getUserById($values->id);
@@ -120,12 +168,25 @@ class UserFormFactory extends Nette\Object {
 				return FALSE;
 			}
 			// nastaveni atributu
-			$editUser->setLogin($values->login);
-			$editUser->setRole($values->role);
-			if (!empty($values->password)) {
-				$editUser->setPassword($values->password);
+			$editUser->setLogin($userValues->login);
+			$editUser->setRole($userValues->role);
+			if (!empty($userValues->password)) {
+				$editUser->setPassword($userValues->password);
 			}
-			//ulozeni zmeny
+			// osoba
+			if ($editUser->person !== NULL) {
+				$person = $editUser->person;
+				$person->name = $personValues->name;
+				$person->surname = $personValues->surname;
+			} else {
+				$person = new \App\Model\Entities\Person($personValues->name, $personValues->surname);
+				$editUser->setPerson($person);
+			}
+			
+			if ($personValues->avatar->isImage()) {
+				$this->imageStorage->setPersonAvatar($person, $personValues->avatar->toImage());
+			}
+			// ulozeni zmeny
 			$this->em->flush();
 		} catch (\Exception $e) {
 			\Tracy\Debugger::log($e, \Tracy\Debugger::INFO);
@@ -141,9 +202,13 @@ class UserFormFactory extends Nette\Object {
 	protected function getDefaults($user) {
 		$result = [];
 		$result['id'] = $user->getId();
-		$result['login'] = $user->getLogin();
-		$result['role'] = $user->getRole();
-		
+		$result['user']['login'] = $user->getLogin();
+		$result['user']['role'] = $user->getRole();
+		$person = $user->person;
+		if ($person) {
+			$result['person']['name'] = $person->name;
+			$result['person']['surname'] = $person->surname;
+		}
 		return $result;
 	}
 

@@ -32,11 +32,17 @@ class Image {
 	
 	/**
 	 * @ORM\Column(type="string", nullable=true)
+	 * @var string|NULL Zdroj nahledu obrazku 
+	 */
+	protected $thumbnail;
+	
+	/**
+	 * @ORM\Column(type="string", nullable=true)
 	 * @var string|NULL Zdroj obrazku (libovolna forma, retezec)
 	 */
 	protected $source;
-	
-	
+
+
 	/**
 	 * @param string $image
 	 * @param string $source
@@ -50,7 +56,10 @@ class Image {
 	 * @return string Nazev/cesta nahledu obrazu
 	 */
 	public function getThumbnail() {
-		return 'pre_' . $this->image;
+		if ($this->thumbnail === NULL) {
+			return 'pre_' . $this->image;
+		}
+		return $this->thumbnail;
 	}
 	
 	/**

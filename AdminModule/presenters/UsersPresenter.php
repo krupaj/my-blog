@@ -45,7 +45,7 @@ final class UsersPresenter extends BaseAdminPresenter {
 	 */
 	public function handleDeleteUser($userId) {
 		//neni-li admin, nemuze mazat ostatni
-		if (!$this->user->isInRole('administrator')) {
+		if (!$this->user->isInRole('admin')) {
 			$this->flashMessage($this->translator->translate('system.requestNA'), self::MESSAGE_DANGER);
 			return;
 		}
@@ -132,7 +132,7 @@ final class UsersPresenter extends BaseAdminPresenter {
 	
 	public function actionNew() {
 		//neni-li admin, nemuze pridavat uzivatele
-		if (!$this->user->isInRole('administrator')) {
+		if (!$this->user->isInRole('admin')) {
 			$this->flashMessage($this->translator->translate('system.requestNA'), self::MESSAGE_DANGER);
 			$this->redirect('default');
 		}
@@ -147,7 +147,7 @@ final class UsersPresenter extends BaseAdminPresenter {
 	 */
 	public function actionEdit($userId) {
 		//neni-li admin, nemuze editovat ostatni
-		if ($this->user->id != $userId && !$this->user->isInRole('administrator')) {
+		if ($this->user->id != $userId && !$this->user->isInRole('admin')) {
 			$this->flashMessage($this->translator->translate('system.requestNA'), self::MESSAGE_DANGER);
 			$this->redirect('default');
 		}
@@ -161,7 +161,7 @@ final class UsersPresenter extends BaseAdminPresenter {
 	}
 	
 	public function renderEdit() {
-		
+		$this->template->person = $this->myUser->person;
 	}
 
 }

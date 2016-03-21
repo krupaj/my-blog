@@ -44,6 +44,13 @@ class User {
 	protected $role;
 	
 	/**
+     * @ORM\OneToOne(targetEntity="App\Model\Entities\Person", cascade={"persist"})
+     * @ORM\JoinColumn(name="person_id", referencedColumnName="person_id", nullable=true)
+	 * @var Person|NULL
+     */
+	protected $person;
+
+	/**
 	 * @var array Seznam roli 
 	 */
 	static private $roleList = [
@@ -114,6 +121,13 @@ class User {
 	
 	public function getId() {
 		return $this->id;
+	}
+	
+	/**
+	 * @param \App\Model\Entities\Person $person
+	 */
+	public function setPerson(Person $person) {
+		$this->person = $person;
 	}
 }
 
