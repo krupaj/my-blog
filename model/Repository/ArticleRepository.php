@@ -150,11 +150,10 @@ class ArticleRepository extends Nette\Object {
 	/**
 	 * Vraci nejdiskutovanejsi clanky
 	 * @param int $count
-	 * @param int|NULL $sectionId 
 	 * @param DateTime|NULL $period
 	 * @return Entities\Article[]
 	 */
-	public function getMostDiscussedArticles($count = 1, $sectionId = NULL, $period = NULL) {
+	public function getMostDiscussedArticles($count = 1, $period = NULL) {
 		if ($period === NULL) {
 			$now = new DateTime();
 			$period = $now->modify("-2 month");
@@ -165,10 +164,6 @@ class ArticleRepository extends Nette\Object {
 		$whereConditon = $query->expr()->andX();
 		$whereConditon->add($query->expr()->gt('a.publishDate', ':period'));
 		$whereConditon->add($query->expr()->eq('a.published', 'TRUE'));
-		if ($sectionId !== NULL) {
-			$whereConditon->add($query->expr()->eq('a.section', $sectionId));
-			$cacheId = '-' . $sectionId;
-		}
 		$result = $query
 					->select('COUNT(u) AS HIDDEN cComments', 'a')
 					->from('App\Model\Entities\Article', 'a')
@@ -186,11 +181,10 @@ class ArticleRepository extends Nette\Object {
 	/**
 	 * Vraci nejctenejsi clanky
 	 * @param int $count
-	 * @param int|NULL $sectionId
 	 * @param DateTime|NULL $period
 	 * @return Entities\Article[]
 	 */
-	public function getMostReadedArticles($count = 1, $sectionId = NULL, $period = NULL) {
+	public function getMostReadedArticles($count = 1, $period = NULL) {
 		if ($period === NULL) {
 			$now = new DateTime();
 			$period = $now->modify("-2 month");
@@ -201,10 +195,6 @@ class ArticleRepository extends Nette\Object {
 		$whereConditon = $query->expr()->andX();
 		$whereConditon->add($query->expr()->gt('a.publishDate', ':period'));
 		$whereConditon->add($query->expr()->eq('a.published', 'TRUE'));
-		if ($sectionId !== NULL) {
-			$whereConditon->add($query->expr()->eq('a.section', $sectionId));
-			$cacheId = '-' . $sectionId;
-		}
 		$result = $query->select('a')
 			->from('App\Model\Entities\Article', 'a')
 			->where($whereConditon)
@@ -219,11 +209,10 @@ class ArticleRepository extends Nette\Object {
 	/**
 	 * Vraci nahodne clanky
 	 * @param int $count
-	 * @param int|NULL $sectionId
 	 * @param DateTime|NULL $period
 	 * @return Entities\Article[]
 	 */
-	public function getRandArticles($count = 1, $sectionId = NULL, $period = NULL) {
+	public function getRandArticles($count = 1, $period = NULL) {
 		if ($period === NULL) {
 			$now = new DateTime();
 			$period = $now->modify("-6 month");
@@ -232,10 +221,6 @@ class ArticleRepository extends Nette\Object {
 		$countAllArticles = (int) $this->countAllArticles();
 		$query = "SELECT a FROM \App\Model\Entities\Article a WHERE a.published = true "
 				. "AND a.publishDate >= :date ";
-		if ($sectionId !== NULL) {
-			$query .= "AND a.section = $sectionId ";
-			$cacheId .= '-' . $sectionId;
-		}
 		$randArticles = $this->em->createQuery($query)
 				->setParameter('date', $period)
 				->setMaxResults($count)

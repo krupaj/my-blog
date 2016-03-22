@@ -11,7 +11,7 @@
 		<meta name="description" content="{_system.metaDescription}">
 		<meta name="author" content="Jiří Krupník">
 
-		<title>{ifset title}{include title|striptags|truncate:50} | {/ifset}{_system.webName}</title>
+		<title>{ifset $article}{$article->getTitle()|striptags|truncate:50} | {/ifset}{_system.webName}</title>
 
 		<!-- Bootstrap Core CSS -->
 		<link href="{$basePath}/css/bootstrap.min.css" rel="stylesheet">
@@ -68,7 +68,7 @@
                 <div class="col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1">
 					{* uvodnik pro blog *}
                     <div class="site-heading" n:if="!isset($article)">
-                        <h1 n:block="title">
+                        <h1>
 						{ifset $title}
 							{$title}
 						{else}

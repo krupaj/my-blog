@@ -152,7 +152,7 @@ class Article {
 		
 		if (isset($splits[0])) {
 			$myId = $splits[0];
-		}
+		} 
 		if (isset($splits[1])) {
 			$myWebTitle = $splits[1];
 		}
