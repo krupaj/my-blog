@@ -1,6 +1,10 @@
 {* Konkretni clanku blogu *}
 {block content}
 <div class="col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1">
+	{*obrazek clanku*}
+	{var $aImage = $article->getImage()}
+	<img src="{$basePath}/images/articles/{$aImage->getThumbnail()}" alt="{$aImage->getAlt()}" class="img-thumbnail img-responsive">
+	{*samotny clanek*}
 	<article>
 		{$article->getContent()|noescape|texy}
 		<div n:if="$article->hasTags()" class="tags-post">
